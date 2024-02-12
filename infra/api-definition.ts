@@ -65,6 +65,24 @@ export const generateApiSpec = (
               $ref: '#/components/schemas/EmploymentStatus',
             },
           },
+          {
+            name: 'monthlyExpenses',
+            description: 'Monthly expenses of the borrower',
+            in: 'query',
+            required: true,
+            schema: {
+              type: 'integer',
+            },
+          },
+          {
+            name: 'creditScore',
+            description: 'Credit Score of the borrower',
+            in: 'query',
+            required: true,
+            schema: {
+              type: 'integer',
+            },
+          },
         ],
         description: 'Calculates borrowing capacity based on input',
         responses: {
