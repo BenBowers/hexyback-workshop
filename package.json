@@ -10,7 +10,8 @@
     "remove": "sst remove",
     "console": "sst console",
     "typecheck": "tsc --noEmit",
-    "test": "vitest"
+    "test": "vitest",
+    "generate-types": "esbuild scripts/generate.ts --bundle --platform=node --target=node20 --format=cjs --outfile=openapi/openapi.cjs && node openapi/openapi.cjs && openapi-typescript openapi/spec.json -o openapi/types.d.ts"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.2",
@@ -19,9 +20,11 @@
     "@typescript-eslint/eslint-plugin": "^6.13.1",
     "aws-cdk-lib": "2.124.0",
     "constructs": "10.3.0",
+    "esbuild": "^0.20.0",
     "eslint": "^8.55.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin@latest": "link:typescript-eslint/eslint-plugin@latest",
+    "openapi-typescript": "7.0.0-next.7",
     "parser@latest": "link:typescript-eslint/parser@latest",
     "sst": "^2.40.3",
     "typescript": "^5.3.3",
