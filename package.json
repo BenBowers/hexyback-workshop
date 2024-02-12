@@ -9,14 +9,23 @@
     "deploy": "sst deploy",
     "remove": "sst remove",
     "console": "sst console",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest"
   },
   "devDependencies": {
     "sst": "^2.40.3",
     "aws-cdk-lib": "2.124.0",
     "constructs": "10.3.0",
     "typescript": "^5.3.3",
-    "@tsconfig/node18": "^18.2.2"
+    "@tsconfig/node20": "^20.1.2",
+    "@types/aws-lambda": "^8.10.130",
+    "@types/node": "^20.10.1",
+    "@typescript-eslint/eslint-plugin": "^6.13.1",
+    "eslint": "^8.55.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin@latest": "link:typescript-eslint/eslint-plugin@latest",
+    "parser@latest": "link:typescript-eslint/parser@latest",
+    "vitest": "^1.0.1"
   },
   "workspaces": [
     "packages/*"
