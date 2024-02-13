@@ -28,6 +28,13 @@ export const generateApiSpec = (
       },
     },
   },
+  'x-amazon-apigateway-request-validators': {
+    all: {
+      validateRequestBody: true,
+      validateRequestParameters: true,
+    },
+  },
+  'x-amazon-apigateway-request-validator': 'all',
   paths: {
     '/borrowingCapacity': {
       get: {
@@ -91,14 +98,32 @@ export const generateApiSpec = (
             content: {
               'application/json': {
                 schema: {
-                  type: 'string',
+                  type: 'object',
+                  required: ['estimatedBorrowingCapacity'],
+                  properties: {
+                    estimatedBorrowingCapacity: {
+                      type: 'integer',
+                    },
+                  },
                 },
               },
             },
           },
           '500': {
             description: 'Internal Server Error',
-            content: {},
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['message'],
+                  properties: {
+                    message: {
+                      type: 'string',
+                    },
+                  },
+                },
+              },
+            },
           },
         },
         'x-amazon-apigateway-integration': {

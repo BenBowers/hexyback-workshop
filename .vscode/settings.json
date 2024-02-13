@@ -13,5 +13,8 @@
   "editor.formatOnSaveMode": "file", // required to format on save
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "cSpell.words": [
+    "openapi"
+  ]
 }
