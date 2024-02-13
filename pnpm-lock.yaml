@@ -4,55 +4,62 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-devDependencies:
-  '@tsconfig/node20':
-    specifier: ^20.1.2
-    version: 20.1.2
-  '@types/aws-lambda':
-    specifier: ^8.10.130
-    version: 8.10.133
-  '@types/node':
-    specifier: ^20.10.1
-    version: 20.11.17
-  '@typescript-eslint/eslint-plugin':
-    specifier: ^6.13.1
-    version: 6.21.0(@typescript-eslint/parser@6.21.0)(eslint@8.56.0)(typescript@5.3.3)
-  aws-cdk-lib:
-    specifier: 2.127.0
-    version: 2.127.0(constructs@10.3.0)
-  constructs:
-    specifier: 10.3.0
-    version: 10.3.0
-  esbuild:
-    specifier: ^0.20.0
-    version: 0.20.0
-  eslint:
-    specifier: ^8.55.0
-    version: 8.56.0
-  eslint-config-prettier:
-    specifier: ^9.1.0
-    version: 9.1.0(eslint@8.56.0)
-  eslint-plugin@latest:
-    specifier: link:typescript-eslint/eslint-plugin@latest
-    version: link:typescript-eslint/eslint-plugin@latest
-  openapi-typescript:
-    specifier: 7.0.0-next.7
-    version: 7.0.0-next.7(typescript@5.3.3)
-  parser@latest:
-    specifier: link:typescript-eslint/parser@latest
-    version: link:typescript-eslint/parser@latest
-  sst:
-    specifier: ^2.40.3
-    version: 2.40.3(@aws-sdk/credential-provider-node@3.511.0)
-  typescript:
-    specifier: ^5.3.3
-    version: 5.3.3
-  vite-tsconfig-paths:
-    specifier: ^4.3.1
-    version: 4.3.1(typescript@5.3.3)
-  vitest:
-    specifier: ^1.0.1
-    version: 1.2.2(@types/node@20.11.17)
+importers:
+
+  .:
+    dependencies:
+      openapi-fetch:
+        specifier: ^0.8.2
+        version: 0.8.2
+    devDependencies:
+      '@tsconfig/node20':
+        specifier: ^20.1.2
+        version: 20.1.2
+      '@types/aws-lambda':
+        specifier: ^8.10.130
+        version: 8.10.133
+      '@types/node':
+        specifier: ^20.10.1
+        version: 20.11.17
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^6.13.1
+        version: 6.21.0(@typescript-eslint/parser@6.21.0)(eslint@8.56.0)(typescript@5.3.3)
+      aws-cdk-lib:
+        specifier: 2.124.0
+        version: 2.124.0(constructs@10.3.0)
+      constructs:
+        specifier: 10.3.0
+        version: 10.3.0
+      esbuild:
+        specifier: ^0.20.0
+        version: 0.20.0
+      eslint:
+        specifier: ^8.55.0
+        version: 8.56.0
+      eslint-config-prettier:
+        specifier: ^9.1.0
+        version: 9.1.0(eslint@8.56.0)
+      eslint-plugin@latest:
+        specifier: link:typescript-eslint/eslint-plugin@latest
+        version: link:typescript-eslint/eslint-plugin@latest
+      openapi-typescript:
+        specifier: ^6.7.4
+        version: 6.7.4
+      parser@latest:
+        specifier: link:typescript-eslint/parser@latest
+        version: link:typescript-eslint/parser@latest
+      sst:
+        specifier: ^2.40.3
+        version: 2.40.3(@aws-sdk/credential-provider-node@3.511.0)
+      typescript:
+        specifier: ^5.3.3
+        version: 5.3.3
+      vite-tsconfig-paths:
+        specifier: ^4.3.1
+        version: 4.3.1(typescript@5.3.3)
+      vitest:
+        specifier: ^1.0.1
+        version: 1.2.2(@types/node@20.11.17)
 
 packages:
 
@@ -2487,32 +2494,6 @@ packages:
     dev: true
     optional: true
 
-  /@redocly/ajv@8.11.0:
-    resolution: {integrity: sha512-9GWx27t7xWhDIR02PA18nzBdLcKQRgc46xNQvjFkrYk4UOmvKhJ/dawwiX0cCOeetN5LcaaiqQbVOWYK62SGHw==}
-    dependencies:
-      fast-deep-equal: 3.1.3
-      json-schema-traverse: 1.0.0
-      require-from-string: 2.0.2
-      uri-js: 4.4.1
-    dev: true
-
-  /@redocly/openapi-core@1.8.2:
-    resolution: {integrity: sha512-VjUz3wrqcDbO1HfEB0AUzh6Y7T1jNJR4Jmgfs0ipuoipLjU5bDsdfKJGSSz2u0WpfmqklPsd11ynkgL5Y+MlCg==}
-    engines: {node: '>=14.19.0', npm: '>=7.0.0'}
-    dependencies:
-      '@redocly/ajv': 8.11.0
-      colorette: 1.4.0
-      js-levenshtein: 1.1.6
-      js-yaml: 4.1.0
-      lodash.isequal: 4.5.0
-      minimatch: 5.1.6
-      node-fetch: 2.7.0
-      pluralize: 8.0.0
-      yaml-ast-parser: 0.0.43
-    transitivePeerDependencies:
-      - encoding
-    dev: true
-
   /@repeaterjs/repeater@3.0.4:
     resolution: {integrity: sha512-AW8PKd6iX3vAZ0vA43nOUOnbq/X5ihgU+mSXXqunMkeQADGiqw/PY0JNeYtD5sr0PAy51YPgAPbDoeapv9r8WA==}
     dev: true
@@ -3766,29 +3747,6 @@ packages:
       - table
       - yaml
 
-  /aws-cdk-lib@2.127.0(constructs@10.3.0):
-    resolution: {integrity: sha512-pEdp2TqgNLYY+kAo68oVzMDEHJevYoRArZJoH+bjM9YTwqRJJiwF1k6tc78e3jca4sCNDZAgX2ytOgqW6lVTWQ==}
-    engines: {node: '>= 14.15.0'}
-    peerDependencies:
-      constructs: ^10.0.0
-    dependencies:
-      '@aws-cdk/asset-awscli-v1': 2.2.202
-      '@aws-cdk/asset-kubectl-v20': 2.1.2
-      '@aws-cdk/asset-node-proxy-agent-v6': 2.0.1
-      constructs: 10.3.0
-    dev: true
-    bundledDependencies:
-      - '@balena/dockerignore'
-      - case
-      - fs-extra
-      - ignore
-      - jsonschema
-      - minimatch
-      - punycode
-      - semver
-      - table
-      - yaml
-
   /aws-crt@1.21.1:
     resolution: {integrity: sha512-pSLf1Xg5P2Owa+n/82hkEXV22q56kbxJOxX4FB5DvvHpTokOygz6nFj+/cS9dnv3tNZgOiUjTvsz0Xk1ldyi0w==}
     requiresBuild: true
@@ -4154,10 +4112,6 @@ packages:
 
   /color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
-    dev: true
-
-  /colorette@1.4.0:
-    resolution: {integrity: sha512-Y2oEozpomLn7Q3HFP7dpww7AtMJplbM9lGZP6RDfHqmbeRjiwRg4n6VM6j4KLmRke85uWEI7JqF17f3pqdRA0g==}
     dev: true
 
   /colorette@2.0.20:
@@ -5418,11 +5372,6 @@ packages:
     resolution: {integrity: sha512-W+oqK4H+r5sITxfxpSU+MMdr/YSWGvgZMQDIsNoBDGGy4i7GBPTtvFKibQzW06n3U3TqHjhvBJsirShsEJ6eeQ==}
     dev: true
 
-  /js-levenshtein@1.1.6:
-    resolution: {integrity: sha512-X2BB11YZtrRqY4EnQcLX5Rh373zbK4alC1FW7D7MBhL2gtcC17cTnr6DmfHZeS0s2rTHjUTMMHfG7gO8SSdw+g==}
-    engines: {node: '>=0.10.0'}
-    dev: true
-
   /js-sdsl@4.3.0:
     resolution: {integrity: sha512-mifzlm2+5nZ+lEcLJMoBK0/IH/bDg8XnJfd/Wq6IP+xoCjLZsTOnV2QpxlVbX9bMnkl5PdEjNtBJ9Cj1NjifhQ==}
     dev: true
@@ -5583,10 +5532,6 @@ packages:
 
   /lodash.flatten@4.4.0:
     resolution: {integrity: sha512-C5N2Z3DgnnKr0LOpv/hKCgKdb7ZZwafIrsesve6lmzvZIRZRGaZ/l6Q8+2W7NaT+ZwO3fFlSCzCzrDCFdJfZ4g==}
-    dev: true
-
-  /lodash.isequal@4.5.0:
-    resolution: {integrity: sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==}
     dev: true
 
   /lodash.isplainobject@4.0.6:
@@ -5883,18 +5828,6 @@ packages:
     engines: {node: '>= 0.6'}
     dev: true
 
-  /node-fetch@2.7.0:
-    resolution: {integrity: sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==}
-    engines: {node: 4.x || >=6.0.0}
-    peerDependencies:
-      encoding: ^0.1.0
-    peerDependenciesMeta:
-      encoding:
-        optional: true
-    dependencies:
-      whatwg-url: 5.0.0
-    dev: true
-
   /node-releases@2.0.14:
     resolution: {integrity: sha512-y10wOWt8yZpqXmOgRo77WaHEmhYQYGNA6y421PKsKYWEK8aW+cqAphborZDhqfyKrbZEN92CN1X2KbafY2s7Yw==}
     dev: true
@@ -5965,19 +5898,26 @@ packages:
       mimic-fn: 4.0.0
     dev: true
 
-  /openapi-typescript@7.0.0-next.7(typescript@5.3.3):
-    resolution: {integrity: sha512-10eoW5weEvUV+knxqd4Ve4n5acSSWLBGvZOVkuctfWwr0v65v7J7IRbP5+3K2Oys7yTHGZnvtKmWhn9ao0L/bw==}
-    hasBin: true
-    peerDependencies:
-      typescript: ^5.x
+  /openapi-fetch@0.8.2:
+    resolution: {integrity: sha512-4g+NLK8FmQ51RW6zLcCBOVy/lwYmFJiiT+ckYZxJWxUxH4XFhsNcX2eeqVMfVOi+mDNFja6qDXIZAz2c5J/RVw==}
     dependencies:
-      '@redocly/openapi-core': 1.8.2
+      openapi-typescript-helpers: 0.0.5
+    dev: false
+
+  /openapi-typescript-helpers@0.0.5:
+    resolution: {integrity: sha512-MRffg93t0hgGZbYTxg60hkRIK2sRuEOHEtCUgMuLgbCC33TMQ68AmxskzUlauzZYD47+ENeGV/ElI7qnWqrAxA==}
+    dev: false
+
+  /openapi-typescript@6.7.4:
+    resolution: {integrity: sha512-EZyeW9Wy7UDCKv0iYmKrq2pVZtquXiD/YHiUClAKqiMi42nodx/EQH11K6fLqjt1IZlJmVokrAsExsBMM2RROQ==}
+    hasBin: true
+    dependencies:
       ansi-colors: 4.1.3
+      fast-glob: 3.3.2
+      js-yaml: 4.1.0
       supports-color: 9.4.0
-      typescript: 5.3.3
+      undici: 5.28.3
       yargs-parser: 21.1.1
-    transitivePeerDependencies:
-      - encoding
     dev: true
 
   /openid-client@5.6.4:
@@ -6145,11 +6085,6 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       find-up: 3.0.0
-    dev: true
-
-  /pluralize@8.0.0:
-    resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
-    engines: {node: '>=4'}
     dev: true
 
   /postcss@8.4.35:
@@ -6844,10 +6779,6 @@ packages:
     engines: {node: '>=0.6'}
     dev: true
 
-  /tr46@0.0.3:
-    resolution: {integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==}
-    dev: true
-
   /tree-kill@1.2.2:
     resolution: {integrity: sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A==}
     hasBin: true
@@ -7180,10 +7111,6 @@ packages:
       tslib: 2.6.2
     dev: true
 
-  /webidl-conversions@3.0.1:
-    resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
-    dev: true
-
   /websocket-stream@5.5.2:
     resolution: {integrity: sha512-8z49MKIHbGk3C4HtuHWDtYX8mYej1wWabjthC/RupM9ngeukU4IWoM46dgth1UOS/T4/IqgEdCDJuMe2039OQQ==}
     dependencies:
@@ -7196,13 +7123,6 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
-    dev: true
-
-  /whatwg-url@5.0.0:
-    resolution: {integrity: sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw==}
-    dependencies:
-      tr46: 0.0.3
-      webidl-conversions: 3.0.1
     dev: true
 
   /which-typed-array@1.1.14:
@@ -7333,10 +7253,6 @@ packages:
 
   /yallist@4.0.0:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
-    dev: true
-
-  /yaml-ast-parser@0.0.43:
-    resolution: {integrity: sha512-2PTINUwsRqSd+s8XxKaJWQlUuEMHJQyEuh2edBbW8KNJz0SJPwUSD2zRWqezFEdN7IzAgeuYHFUCF7o8zRdZ0A==}
     dev: true
 
   /yaml@1.10.2:

@@ -1,4 +1,4 @@
-import { aws_apigateway as apigateway } from 'aws-cdk-lib';
+import { aws_apigateway as apigateway, aws_iam as iam } from 'aws-cdk-lib';
 import { Config, Function, StackContext } from 'sst/constructs';
 import { generateApiSpec } from './api-definition';
 export function ConfigStack({ stack, app }: StackContext) {
@@ -25,6 +25,28 @@ export function ConfigStack({ stack, app }: StackContext) {
       )
     ),
   });
+  calculateBorrowingPowerHandler.grantInvoke(
+    new iam.ServicePrincipal('apigateway.amazonaws.com', {
+      conditions: {
+        ArnLike: {
+          'aws:SourceArn': api.arnForExecuteApi(
+            'GET',
+            '/borrowingCapacity',
+            api.deploymentStage.stageName
+          ),
+        },
+      },
+    })
+  );
+  apiGatewayAuthHandler.grantInvoke(
+    new iam.ServicePrincipal('apigateway.amazonaws.com', {
+      conditions: {
+        ArnLike: {
+          'aws:SourceArn': `arn:aws:execute-api:${app.region}:${app.account}:${api.restApiId}/authorizers/*`,
+        },
+      },
+    })
+  );
   Config.Parameter.create(stack, {
     API_ENDPOINT: api.url,
   });

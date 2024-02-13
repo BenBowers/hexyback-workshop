@@ -9,8 +9,9 @@
     "deploy": "sst deploy",
     "remove": "sst remove",
     "console": "sst console",
-    "typecheck": "tsc --noEmit",
-    "lint": "eslint . --ext .ts",
+    "generate-types": "esbuild scripts/generate.ts --bundle --platform=node --target=node20 --format=cjs --outfile=openapi/openapi.cjs && node openapi/openapi.cjs && openapi-typescript openapi/spec.json -o openapi/types.d.ts",
+    "typecheck": "pnpm run generate-types && tsc --noEmit",
+    "lint": "pnpm run generate-types && eslint . --ext .ts",
     "test": "vitest",
     "test:integration": "sst bind 'vitest -c vitest-integration.config.ts'"
   },
@@ -19,13 +20,13 @@
     "@types/aws-lambda": "^8.10.130",
     "@types/node": "^20.10.1",
     "@typescript-eslint/eslint-plugin": "^6.13.1",
-    "aws-cdk-lib": "2.127.0",
+    "aws-cdk-lib": "2.124.0",
     "constructs": "10.3.0",
     "esbuild": "^0.20.0",
     "eslint": "^8.55.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin@latest": "link:typescript-eslint/eslint-plugin@latest",
-    "openapi-typescript": "7.0.0-next.7",
+    "openapi-typescript": "^6.7.4",
     "parser@latest": "link:typescript-eslint/parser@latest",
     "sst": "^2.40.3",
     "typescript": "^5.3.3",
@@ -34,5 +35,8 @@
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "openapi-fetch": "^0.8.2"
+  }
 }

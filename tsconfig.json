@@ -4,6 +4,7 @@
     "packages"
   ],
   "compilerOptions": {
+    "noUncheckedIndexedAccess": true,
     "module": "esnext",
     "moduleResolution": "node",
     "paths": {
