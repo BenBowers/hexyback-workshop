@@ -60,7 +60,7 @@ describe.concurrent('api-aw-calculate-borrowing-power', () => {
     ).resolves.toEqual({
       error: {
         message:
-          'Missing required request parameters: [creditScore, monthlyExpenses, grossIncome, employmentStatus, age]',
+          'Missing required request parameters: [grossIncome, employmentStatus, age]',
       },
       response: expect.objectContaining({
         status: 400,
@@ -77,16 +77,14 @@ describe.concurrent('api-aw-calculate-borrowing-power', () => {
         params: {
           query: {
             age: 20,
-            creditScore: 500,
             employmentStatus: 'CASUAL',
-            grossIncome: 100000,
-            monthlyExpenses: 2000,
+            grossIncome: 1000,
           },
         },
       })
     ).resolves.toEqual({
       data: {
-        estimatedBorrowingCapacity: expect.toBeNumber(),
+        estimatedBorrowingCapacity: 216,
       },
       response: expect.objectContaining({
         status: 200,
