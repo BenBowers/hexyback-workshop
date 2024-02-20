@@ -4,7 +4,7 @@ import { ConfigStack } from './infra/ConfigStack';
 const LAMBDA_INSIGHTS_ARN =
   'arn:aws:lambda:ap-southeast-2:580247275435:layer:LambdaInsightsExtension-Arm64:5';
 export default {
-  config(_input) {
+  config() {
     return {
       name: 'hexyback-workshop',
       region: 'ap-southeast-2',

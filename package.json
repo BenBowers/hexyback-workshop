@@ -26,6 +26,7 @@
     "eslint": "^8.55.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin@latest": "link:typescript-eslint/eslint-plugin@latest",
+    "openapi": "^1.0.1",
     "openapi-typescript": "^6.7.4",
     "parser@latest": "link:typescript-eslint/parser@latest",
     "sst": "^2.40.3",
