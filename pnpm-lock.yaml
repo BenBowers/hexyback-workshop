@@ -14,8 +14,8 @@ devDependencies:
     specifier: ^20.1.2
     version: 20.1.2
   '@types/aws-lambda':
-    specifier: ^8.10.130
-    version: 8.10.133
+    specifier: ^8.10.134
+    version: 8.10.134
   '@types/node':
     specifier: ^20.11.20
     version: 20.11.20
@@ -3266,8 +3266,8 @@ packages:
     resolution: {integrity: sha512-madaWq2k+LYMEhmcp0fs+OGaLFk0OenpHa4gmI4VEmCKX4PJntQ6fnnGADVFrVkBj0wIdAlQnK/MrlYTHsa1gQ==}
     dev: true
 
-  /@types/aws-lambda@8.10.133:
-    resolution: {integrity: sha512-sr852MAL/79rjDelXP6ZuJ6GwOvXIRrFAoC8a+w91mZ5XR71CuzSgo1d0+pG1qgfPhjFgaibu7SWaoC5BA7pyQ==}
+  /@types/aws-lambda@8.10.134:
+    resolution: {integrity: sha512-cfv422ivDMO+EeA3N4YcshbTHBL+5lLXe+Uz+4HXvIcsCuWvqNFpOs28ZprL8NA3qRCzt95ETiNAJDn4IcC/PA==}
     dev: true
 
   /@types/estree@1.0.5:
