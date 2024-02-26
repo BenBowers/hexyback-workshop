@@ -23,7 +23,7 @@
     "aws-cdk-lib": "2.124.0",
     "constructs": "10.3.0",
     "esbuild": "^0.20.1",
-    "eslint": "^8.55.0",
+    "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin@latest": "link:typescript-eslint/eslint-plugin@latest",
     "openapi": "^1.0.1",
