@@ -19,7 +19,7 @@
     "@tsconfig/node20": "^20.1.2",
     "@types/aws-lambda": "^8.10.134",
     "@types/node": "^20.11.20",
-    "@typescript-eslint/eslint-plugin": "^7.0.1",
+    "@typescript-eslint/eslint-plugin": "^7.0.2",
     "aws-cdk-lib": "2.124.0",
     "constructs": "10.3.0",
     "esbuild": "^0.20.1",
