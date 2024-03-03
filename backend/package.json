@@ -1,0 +1,33 @@
+{
+  "name": "hexyback-workshop",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "sst dev",
+    "build": "sst build",
+    "deploy": "sst deploy",
+    "remove": "sst remove",
+    "console": "sst console",
+    "generate-types": "esbuild scripts/generate.ts --bundle --platform=node --target=node20 --format=cjs --outfile=openapi/openapi.cjs && node openapi/openapi.cjs && openapi-typescript openapi/spec.json -o openapi/types.d.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --ext .ts",
+    "test": "vitest",
+    "test-ci": "vitest run",
+    "test:integration": "sst bind 'vitest -c vitest-integration.config.ts'"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.134",
+    "openapi": "^1.0.1",
+    "openapi-typescript": "^6.7.4"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "dependencies": {
+    "openapi-fetch": "^0.9.2",
+    "@aws-lambda-powertools/logger": "^1.18.1",
+    "@aws-lambda-powertools/tracer": "^1.18.1",
+    "@middy/core": "~3"
+  }
+}

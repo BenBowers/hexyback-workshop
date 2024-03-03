@@ -3,6 +3,9 @@
     "browser": true,
     "es2021": true
   },
+  "ignorePatterns": [
+    "**/openapi/**/*"
+  ],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",

@@ -9,21 +9,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - uses: pnpm/action-setup@v2
+          node-version: 20 
+      - uses: pnpm/action-setup@v3
         name: Install pnpm
         with:
           version: 8
           run_install: false
       - name: Install 
         run: pnpm install
-      - name: Lint
-        run: pnpm run lint 
-      - name: Typecheck
-        run: pnpm run typecheck
-      - name: Test
-        run: pnpm run test
+      - name: CI Checks 
+        run: pnpm turbo ci
