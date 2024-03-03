@@ -3,7 +3,7 @@ import {
   AdjustedForEmploymentStatus,
 } from '@/entities/BorrowingPowerCalculation';
 
-const adjustForAge = (
+export const adjustForAge = (
   borrowingPowerCalculation: AdjustedForEmploymentStatus
 ): AdjustedForAge => {
   const adjustedForEmploymentStatus =
@@ -22,5 +22,3 @@ const adjustForAge = (
     adjustedForAge,
   };
 };
-
-export default adjustForAge;

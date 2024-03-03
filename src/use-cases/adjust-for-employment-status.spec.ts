@@ -1,7 +1,8 @@
+import { BorrowerProfile } from '@/entities/BorrowerProfile';
 import { BaseBorrowingCapacity } from '@/entities/BorrowingPowerCalculation';
 import { describe, expect, it } from 'vitest';
-import { BorrowerProfile } from '../entities/BorrowerProfile';
-import adjustForEmploymentStatus from './adjust-for-employment-status';
+import { adjustForEmploymentStatus } from './adjust-for-employment-status';
+
 describe('adjust-for-employment-status', () => {
   describe('Given a base borrowing capacity', () => {
     describe('for a full-time employee', () => {

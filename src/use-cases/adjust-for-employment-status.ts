@@ -4,7 +4,7 @@ import {
 } from '@/entities/BorrowingPowerCalculation';
 import { EmploymentStatus } from '@/types/api';
 
-const adjustForEmploymentStatus = (
+export const adjustForEmploymentStatus = (
   borrowingPowerCalculation: BaseBorrowingCapacity
 ): AdjustedForEmploymentStatus => {
   const employmentStatus =
@@ -28,4 +28,3 @@ const adjustForEmploymentStatus = (
     adjustedForEmploymentStatus,
   };
 };
-export default adjustForEmploymentStatus;

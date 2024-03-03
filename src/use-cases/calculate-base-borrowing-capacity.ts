@@ -1,7 +1,7 @@
 import { BorrowerProfile } from '@/entities/BorrowerProfile';
 import { BaseBorrowingCapacity } from '@/entities/BorrowingPowerCalculation';
 
-const calculateBaseBorrowingCapacity = (
+export const calculateBaseBorrowingCapacity = (
   borrowerProfile: BorrowerProfile
 ): BaseBorrowingCapacity => {
   return {
@@ -9,5 +9,3 @@ const calculateBaseBorrowingCapacity = (
     baseBorrowingCapacity: borrowerProfile.grossIncome * 0.3,
   };
 };
-
-export default calculateBaseBorrowingCapacity;

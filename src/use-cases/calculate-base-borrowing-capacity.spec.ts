@@ -1,7 +1,7 @@
 import { BorrowerProfile } from '@/entities/BorrowerProfile';
 import { BaseBorrowingCapacity } from '@/entities/BorrowingPowerCalculation';
 import { describe, expect, it } from 'vitest';
-import calculateBaseBorrowingCapacity from './calculate-base-borrowing-capacity';
+import { calculateBaseBorrowingCapacity } from './calculate-base-borrowing-capacity';
 
 describe('calculate-base-borrowing-capacity', () => {
   describe('Given a borrower profile', () => {
