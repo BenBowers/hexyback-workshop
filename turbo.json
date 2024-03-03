@@ -1,0 +1,31 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "generate-types": {
+      "outputs": [
+        "openapi/**"
+      ],
+      "inputs": [
+        "infra/api-definition.ts"
+      ]
+    },
+    "typecheck": {
+      "dependsOn": [
+        "generate-types"
+      ]
+    },
+    "lint": {
+      "dependsOn": [
+        "generate-types"
+      ]
+    },
+    "test-ci": {},
+    "ci": {
+      "dependsOn": [
+        "typecheck",
+        "lint",
+        "test-ci"
+      ]
+    }
+  }
+}
