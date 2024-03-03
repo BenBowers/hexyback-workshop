@@ -1,7 +1,7 @@
 import { BorrowerProfile } from '@/entities/BorrowerProfile';
 import { AdjustedForEmploymentStatus } from '@/entities/BorrowingPowerCalculation';
 import { describe, expect, it } from 'vitest';
-import adjustForAge from './adjust-for-age';
+import { adjustForAge } from './adjust-for-age';
 
 describe('adjust-for-age', () => {
   describe('Given the borrowing power adjusted for employment status', () => {
