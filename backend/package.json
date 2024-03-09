@@ -1,5 +1,5 @@
 {
-  "name": "hexyback-workshop",
+  "name": "@hexy/backend",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -21,13 +21,15 @@
     "openapi": "^1.0.1",
     "openapi-typescript": "^6.7.4"
   },
-  "workspaces": [
-    "packages/*"
-  ],
   "dependencies": {
     "openapi-fetch": "^0.9.2",
     "@aws-lambda-powertools/logger": "^1.18.1",
     "@aws-lambda-powertools/tracer": "^1.18.1",
     "@middy/core": "~3"
+  },
+  "exports": {
+    ".": {
+      "default": "./openapi/spec.json"
+    }
   }
 }

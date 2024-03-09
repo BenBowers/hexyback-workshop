@@ -7,6 +7,7 @@ import { Logger, injectLambdaContext } from '@aws-lambda-powertools/logger';
 import { Tracer, captureLambdaHandler } from '@aws-lambda-powertools/tracer';
 import middy from '@middy/core';
 import { APIGatewayProxyEvent, APIGatewayProxyHandler } from 'aws-lambda';
+
 const serviceName = 'GetBorrowingPower';
 
 const tracer = new Tracer({
