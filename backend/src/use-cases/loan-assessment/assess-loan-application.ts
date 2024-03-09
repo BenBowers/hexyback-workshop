@@ -10,9 +10,9 @@ const invalidCreditScoreUpperBoundary = 300;
 const lowCreditScoreUpperBoundary = 500;
 const midCreditScoreUpperBoundary = 700;
 
-export const assessLoanApplication = (
+export const assessLoanApplication = async (
   applicant: DetailedBorrowerProfile
-): LoanApplicationStatus => {
+): Promise<LoanApplicationStatus> => {
   // Validate age
   if (applicant.age < lowerAgeBoundary || applicant.age > upperAgeBoundary) {
     return 'REJECTED';

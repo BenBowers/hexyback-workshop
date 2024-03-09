@@ -15,6 +15,10 @@ export function ConfigStack({ stack, app }: StackContext) {
       functionName: app.logicalPrefixedName('CalculateBorrowingPower'),
     }
   );
+  const applyForLoanHandler = new Function(stack, 'applyForLoanHandlerLambda', {
+    handler: 'src/adaptors/primary/api-gw-apply-for-loan.handler',
+    functionName: app.logicalPrefixedName('ApplyForLoan'),
+  });
 
   const apiGatewayCloudwatchLogGroup = new logs.LogGroup(
     stack,
@@ -38,7 +42,10 @@ export function ConfigStack({ stack, app }: StackContext) {
       dataTraceEnabled: true,
     },
     apiDefinition: apigateway.ApiDefinition.fromInline(
-      generateApiSpec(calculateBorrowingPowerHandler.functionArn, '')
+      generateApiSpec(
+        calculateBorrowingPowerHandler.functionArn,
+        applyForLoanHandler.functionArn
+      )
     ),
   });
   calculateBorrowingPowerHandler.grantInvoke(
@@ -48,6 +55,19 @@ export function ConfigStack({ stack, app }: StackContext) {
           'aws:SourceArn': api.arnForExecuteApi(
             'GET',
             '/borrowingCapacity',
+            api.deploymentStage.stageName
+          ),
+        },
+      },
+    })
+  );
+  applyForLoanHandler.grantInvoke(
+    new iam.ServicePrincipal('apigateway.amazonaws.com', {
+      conditions: {
+        ArnLike: {
+          'aws:SourceArn': api.arnForExecuteApi(
+            'POST',
+            '/loan',
             api.deploymentStage.stageName
           ),
         },
