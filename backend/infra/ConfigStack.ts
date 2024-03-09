@@ -38,7 +38,7 @@ export function ConfigStack({ stack, app }: StackContext) {
       dataTraceEnabled: true,
     },
     apiDefinition: apigateway.ApiDefinition.fromInline(
-      generateApiSpec(calculateBorrowingPowerHandler.functionArn)
+      generateApiSpec(calculateBorrowingPowerHandler.functionArn, '')
     ),
   });
   calculateBorrowingPowerHandler.grantInvoke(

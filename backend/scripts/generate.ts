@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import { generateApiSpec } from '../infra/api-definition';
 import { generateApiSpec as generateCreditScoreServiceApiSpec } from '../infra/credit-score-service-api-definition';
 
-const apiSpec = generateApiSpec('');
+const apiSpec = generateApiSpec('', '');
 const creditScoreServiceApiSpec = generateCreditScoreServiceApiSpec('', '');
 
 fs.writeFileSync('openapi/spec.json', JSON.stringify(apiSpec, null, 2));
