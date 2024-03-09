@@ -2,7 +2,7 @@ import {
   BorrowingCapacityGetParams,
   BorrowingCapacityResponse,
 } from '@/types/api';
-import { calculateBorrowingCapacity } from '@/use-cases/calculate-borrowing-capacity';
+import { calculateBorrowingCapacity } from '@/use-cases/borrowing-capacity/calculate-borrowing-capacity';
 import { Logger, injectLambdaContext } from '@aws-lambda-powertools/logger';
 import { Tracer, captureLambdaHandler } from '@aws-lambda-powertools/tracer';
 import middy from '@middy/core';
