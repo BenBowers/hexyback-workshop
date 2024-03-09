@@ -8,6 +8,7 @@
 .docusaurus
 .cache-loader
 docs/hexy
+docs/credit-score-service-api
 
 # Misc
 .DS_Store

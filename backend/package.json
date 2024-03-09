@@ -9,7 +9,7 @@
     "deploy": "sst deploy",
     "remove": "sst remove",
     "console": "sst console",
-    "generate-types": "esbuild scripts/generate.ts --bundle --platform=node --target=node20 --format=cjs --outfile=openapi/openapi.cjs && node openapi/openapi.cjs && openapi-typescript openapi/spec.json -o openapi/types.d.ts",
+    "generate-types": "esbuild scripts/generate.ts --bundle --platform=node --target=node20 --format=cjs --outfile=openapi/openapi.cjs && node openapi/openapi.cjs && openapi-typescript openapi/spec.json -o openapi/types.d.ts && openapi-typescript openapi/credit-score-service-api-spec.json -o openapi/credit-score-service-api-types.d.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --ext .ts",
     "test": "vitest",
