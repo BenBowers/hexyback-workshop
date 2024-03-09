@@ -9,6 +9,23 @@
         "infra/api-definition.ts"
       ]
     },
+    "@hexy/docs#gen-api-docs-all": {
+      "outputs": [
+        "docs/hexy/**"
+      ],
+      "inputs": [
+        "docusaurus.config.js"
+      ],
+      "dependsOn": [
+        "@hexy/backend#generate-types"
+      ]
+    },
+    "@hexy/docs#start": {
+      "cache": false,
+      "dependsOn": [
+        "@hexy/docs#gen-api-docs-all"
+      ]
+    },
     "typecheck": {
       "dependsOn": [
         "generate-types"
