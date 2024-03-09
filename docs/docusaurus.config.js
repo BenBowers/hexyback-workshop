@@ -6,8 +6,8 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'I\'m bringing hexy back',
-  tagline: 'those other frameworks don\'t know how to act',
+  title: "I'm bringing hexy back",
+  tagline: "those other frameworks don't know how to act",
   url: 'https://your-docusaurus-test-site.com',
   baseUrl: '/',
   onBrokenLinks: 'throw',
@@ -49,7 +49,7 @@ const config = {
         },
       },
       navbar: {
-        title: 'I\'m bringing hexy back',
+        title: "I'm bringing hexy back",
         logo: {
           alt: 'My Site Logo',
           src: 'img/logo.svg',
@@ -131,6 +131,15 @@ const config = {
           hexy: {
             specPath: 'node_modules/@hexy/backend/openapi/spec.json',
             outputDir: 'docs/hexy',
+            sidebarOptions: {
+              groupPathsBy: 'tag',
+              categoryLinkSource: 'tag',
+            },
+          },
+          creditScoreService: {
+            specPath:
+              'node_modules/@hexy/backend/openapi/credit-score-service-api-spec.json',
+            outputDir: 'docs/credit-score-service-api',
             sidebarOptions: {
               groupPathsBy: 'tag',
               categoryLinkSource: 'tag',
