@@ -1,7 +1,4 @@
-export const generateApiSpec = (
-  apiGatewayAuthHandlerArn: string,
-  calculateBorrowingPowerHandlerArn: string
-) => ({
+export const generateApiSpec = (calculateBorrowingPowerHandlerArn: string) => ({
   openapi: '3.0.1',
   info: {
     title: 'loan-api',
@@ -12,19 +9,6 @@ export const generateApiSpec = (
       EmploymentStatus: {
         type: 'string',
         enum: ['CASUAL', 'FULL_TIME', 'PART_TIME', 'SELF_EMPLOYED'],
-      },
-    },
-    securitySchemes: {
-      EndpointAuthorizer: {
-        type: 'apiKey',
-        name: 'authorization',
-        in: 'header',
-        'x-amazon-apigateway-authtype': 'custom',
-        'x-amazon-apigateway-authorizer': {
-          type: 'token',
-          identitySource: 'method.request.header.authorization',
-          authorizerUri: `arn:\${AWS::Partition}:apigateway:\${AWS::Region}:lambda:path/2015-03-31/functions/${apiGatewayAuthHandlerArn}/invocations`,
-        },
       },
     },
   },
@@ -39,11 +23,6 @@ export const generateApiSpec = (
     '/borrowingCapacity': {
       get: {
         summary: 'Get an estimate of your borrowing power',
-        security: [
-          {
-            EndpointAuthorizer: [],
-          },
-        ],
         parameters: [
           {
             name: 'age',

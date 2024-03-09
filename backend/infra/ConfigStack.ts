@@ -7,13 +7,6 @@ import { Config, Function, StackContext } from 'sst/constructs';
 import { generateApiSpec } from './api-definition';
 
 export function ConfigStack({ stack, app }: StackContext) {
-  const apiKey = new Config.Secret(stack, 'API_KEY');
-
-  const apiGatewayAuthHandler = new Function(stack, 'lambdaAuth', {
-    functionName: app.logicalPrefixedName('apiAuthorizer'),
-    handler: 'src/adaptors/primary/api-gw-authorizer.handler',
-    bind: [apiKey],
-  });
   const calculateBorrowingPowerHandler = new Function(
     stack,
     'calculateBorrowingPowerLambda',
@@ -45,10 +38,7 @@ export function ConfigStack({ stack, app }: StackContext) {
       dataTraceEnabled: true,
     },
     apiDefinition: apigateway.ApiDefinition.fromInline(
-      generateApiSpec(
-        apiGatewayAuthHandler.functionArn,
-        calculateBorrowingPowerHandler.functionArn
-      )
+      generateApiSpec(calculateBorrowingPowerHandler.functionArn)
     ),
   });
   calculateBorrowingPowerHandler.grantInvoke(
@@ -60,15 +50,6 @@ export function ConfigStack({ stack, app }: StackContext) {
             '/borrowingCapacity',
             api.deploymentStage.stageName
           ),
-        },
-      },
-    })
-  );
-  apiGatewayAuthHandler.grantInvoke(
-    new iam.ServicePrincipal('apigateway.amazonaws.com', {
-      conditions: {
-        ArnLike: {
-          'aws:SourceArn': `arn:${stack.partition}:execute-api:${app.region}:${app.account}:${api.restApiId}/authorizers/*`,
         },
       },
     })

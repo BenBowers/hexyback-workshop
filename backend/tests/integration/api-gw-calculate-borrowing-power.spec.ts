@@ -9,44 +9,6 @@ describe.concurrent('api-aw-calculate-borrowing-power', () => {
   const apiClient = openApiFetch<paths>({
     baseUrl: baseUrl,
   });
-  it('responds with 401 Unauthorized given the user does not provide a authorization token', async () => {
-    await expect(
-      apiClient.GET('/borrowingCapacity', {
-        params: {
-          query: {} as BorrowingCapacityGetParams,
-        },
-      })
-    ).resolves.toEqual({
-      error: {
-        message: 'Unauthorized',
-      },
-      response: expect.objectContaining({
-        status: 401,
-        statusText: 'Unauthorized',
-      }),
-    });
-  });
-  it('responds with 403 Forbidden given the user provides an invalid authorization token', async () => {
-    await expect(
-      apiClient.GET('/borrowingCapacity', {
-        headers: {
-          authorization: 'invalid',
-        },
-        params: {
-          query: {} as BorrowingCapacityGetParams,
-        },
-      })
-    ).resolves.toEqual({
-      error: {
-        Message:
-          'User is not authorized to access this resource with an explicit deny',
-      },
-      response: expect.objectContaining({
-        status: 403,
-        statusText: 'Forbidden',
-      }),
-    });
-  });
   it('responds with a 400 Bad Request given the user is authenticated but does not provide the required query params', async () => {
     await expect(
       apiClient.GET('/borrowingCapacity', {

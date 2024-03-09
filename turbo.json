@@ -1,13 +1,18 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "pipeline": {
-    "generate-types": {
+    "generate-types": {},
+    "@hexy/backend#generate-types": {
       "outputs": [
         "openapi/**"
       ],
       "inputs": [
-        "infra/api-definition.ts"
+        "infra/api-definition.ts",
+        "scripts/generate.ts"
       ]
+    },
+    "deploy": {
+      "cache": false
     },
     "@hexy/docs#gen-api-docs-all": {
       "outputs": [
