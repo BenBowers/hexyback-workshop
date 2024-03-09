@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import { generateApiSpec } from '../infra/api-definition';
 
-const apiSpec = generateApiSpec('', '');
+const apiSpec = generateApiSpec('');
 
 fs.writeFileSync('openapi/spec.json', JSON.stringify(apiSpec, null, 2));
 
