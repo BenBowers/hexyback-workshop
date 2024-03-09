@@ -1,4 +1,7 @@
-export const generateApiSpec = (calculateBorrowingPowerHandlerArn: string) => ({
+export const generateApiSpec = (
+  calculateBorrowingPowerHandlerArn: string,
+  applyForLoanHandlerArn: string
+) => ({
   openapi: '3.0.1',
   info: {
     title: 'loan-api',
@@ -9,6 +12,40 @@ export const generateApiSpec = (calculateBorrowingPowerHandlerArn: string) => ({
       EmploymentStatus: {
         type: 'string',
         enum: ['CASUAL', 'FULL_TIME', 'PART_TIME', 'SELF_EMPLOYED'],
+      },
+      LoanApplicationStatus: {
+        type: 'string',
+        enum: ['APPROVED', 'REJECTED', 'REVIEW'],
+      },
+      LoanApplication: {
+        type: 'object',
+        required: [
+          'age',
+          'grossIncome',
+          'employmentStatus',
+          'grossIncome',
+          'creditScore',
+          'monthlyExpenses',
+        ],
+        properties: {
+          grossIncome: {
+            type: 'integer',
+          },
+          monthlyExpenses: {
+            type: 'integer',
+          },
+          creditScore: {
+            type: 'integer',
+          },
+          age: {
+            type: 'integer',
+          },
+          employmentStatus: {
+            schema: {
+              $ref: '#/components/schemas/EmploymentStatus',
+            },
+          },
+        },
       },
     },
   },
@@ -89,6 +126,69 @@ export const generateApiSpec = (calculateBorrowingPowerHandlerArn: string) => ({
         },
         'x-amazon-apigateway-integration': {
           uri: `arn:\${AWS::Partition}:apigateway:\${AWS::Region}:lambda:path/2015-03-31/functions/${calculateBorrowingPowerHandlerArn}/invocations`,
+          responses: {
+            default: {
+              statusCode: '200',
+            },
+          },
+          passthroughBehavior: 'when_no_match',
+          httpMethod: 'POST',
+          contentHandling: 'CONVERT_TO_TEXT',
+          type: 'aws_proxy',
+        },
+      },
+    },
+    '/loan': {
+      post: {
+        summary: 'Apply for a loan',
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/LoanApplication',
+              },
+            },
+          },
+        },
+        description: 'Assesses a borrowers loan application',
+        responses: {
+          '200': {
+            description: 'OK',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['loanApplicationStatus'],
+                  properties: {
+                    loanApplicationStatus: {
+                      schema: {
+                        $ref: '#/components/schemas/LoanApplicationStatus',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          '500': {
+            description: 'Internal Server Error',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['message'],
+                  properties: {
+                    message: {
+                      type: 'string',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        'x-amazon-apigateway-integration': {
+          uri: `arn:\${AWS::Partition}:apigateway:\${AWS::Region}:lambda:path/2015-03-31/functions/${applyForLoanHandlerArn}/invocations`,
           responses: {
             default: {
               statusCode: '200',
