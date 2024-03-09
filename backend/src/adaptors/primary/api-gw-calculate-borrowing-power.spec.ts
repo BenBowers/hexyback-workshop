@@ -1,12 +1,15 @@
 import { EmploymentStatus } from '@/types/api';
-import { calculateBorrowingCapacity } from '@/use-cases/calculate-borrowing-capacity';
+import { calculateBorrowingCapacity } from '@/use-cases/borrowing-capacity/calculate-borrowing-capacity';
 import { APIGatewayProxyEvent, Context } from 'aws-lambda';
 import { describe, expect, it, vi } from 'vitest';
 import { handler } from './api-gw-calculate-borrowing-power';
 describe('api gw calculate borrowing power', () => {
-  vi.mock('@/use-cases/calculate-borrowing-capacity', () => ({
-    calculateBorrowingCapacity: vi.fn(),
-  }));
+  vi.mock(
+    '@/use-cases/borrowing-capacity/calculate-borrowing-capacity',
+    () => ({
+      calculateBorrowingCapacity: vi.fn(),
+    })
+  );
   const calculateBorrowingCapacitySpy = vi.mocked(calculateBorrowingCapacity);
   describe('given an api gateway proxy event', () => {
     it(
