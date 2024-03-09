@@ -41,9 +41,7 @@ export const generateApiSpec = (
             type: 'integer',
           },
           employmentStatus: {
-            schema: {
-              $ref: '#/components/schemas/EmploymentStatus',
-            },
+            $ref: '#/components/schemas/EmploymentStatus',
           },
         },
       },
@@ -142,6 +140,7 @@ export const generateApiSpec = (
       post: {
         summary: 'Apply for a loan',
         requestBody: {
+          required: true,
           content: {
             'application/json': {
               schema: {
