@@ -1,7 +1,13 @@
-export const generateApiSpec = (
-  calculateBorrowingPowerHandlerArn: string,
-  applyForLoanHandlerArn: string
-) => ({
+export type GenerateApiDependencies = {
+  calculateBorrowingPowerHandlerArn: string;
+  applyForLoanHandlerArn: string;
+  createBorrowerProfileHandlerArn: string;
+};
+export const generateApiSpec = ({
+  calculateBorrowingPowerHandlerArn,
+  applyForLoanHandlerArn,
+  createBorrowerProfileHandlerArn,
+}: GenerateApiDependencies) => ({
   openapi: '3.0.1',
   info: {
     title: 'loan-api',
@@ -45,6 +51,30 @@ export const generateApiSpec = (
           },
         },
       },
+      Borrower: {
+        type: 'object',
+        required: ['name', 'dob', 'email', 'creditScore'],
+        properties: {
+          name: {
+            type: 'string',
+          },
+          email: {
+            type: 'string',
+          },
+          dob: {
+            type: 'string',
+            description:
+              'Borrowers date of birth in ISO8601 date string format',
+            example: '1990-01-01',
+            pattern: '^(\\d{4}-\\d{2}-\\d{2})$',
+          },
+          creditScore: {
+            type: 'integer',
+            minimum: 0,
+            maximum: 1000,
+          },
+        },
+      },
     },
   },
   'x-amazon-apigateway-request-validators': {
@@ -55,6 +85,83 @@ export const generateApiSpec = (
   },
   'x-amazon-apigateway-request-validator': 'all',
   paths: {
+    '/borrower': {
+      post: {
+        summary: 'Create a borrower',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/Borrower',
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Borrower already exists',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['email'],
+                  properties: {
+                    email: {
+                      type: 'string',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          '201': {
+            description: 'Borrower created',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['email'],
+                  properties: {
+                    email: {
+                      type: 'string',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          '400': {
+            description: 'Bad Request',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['message'],
+                  properties: {
+                    message: {
+                      type: 'string',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        'x-amazon-apigateway-integration': {
+          uri: `arn:\${AWS::Partition}:apigateway:\${AWS::Region}:lambda:path/2015-03-31/functions/${createBorrowerProfileHandlerArn}/invocations`,
+          responses: {
+            default: {
+              statusCode: '200',
+            },
+          },
+          passthroughBehavior: 'when_no_match',
+          httpMethod: 'POST',
+          contentHandling: 'CONVERT_TO_TEXT',
+          type: 'aws_proxy',
+        },
+      },
+    },
     '/borrowingCapacity': {
       get: {
         summary: 'Get an estimate of your borrowing power',
