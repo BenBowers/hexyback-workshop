@@ -9,7 +9,7 @@
     "deploy": "sst deploy",
     "remove": "sst remove",
     "console": "sst console",
-    "generate-types": "esbuild scripts/generate.ts --bundle --platform=node --target=node20 --format=cjs --outfile=openapi/openapi.cjs && node openapi/openapi.cjs && openapi-typescript openapi/spec.json -o openapi/types.d.ts && openapi-typescript openapi/credit-score-service-api-spec.json -o openapi/credit-score-service-api-types.d.ts",
+    "generate-types": "esbuild scripts/generate.ts --bundle --platform=node --target=node20 --format=cjs --outfile=openapi/openapi.cjs && node openapi/openapi.cjs && openapi-typescript openapi/spec.json -o openapi/types.d.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --ext .ts",
     "test": "vitest",
@@ -18,14 +18,18 @@
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.134",
+    "aws-sdk-client-mock": "^3.0.1",
+    "aws-sdk-client-mock-jest": "^3.0.1",
     "openapi": "^1.0.1",
     "openapi-typescript": "^6.7.4"
   },
   "dependencies": {
-    "openapi-fetch": "^0.9.2",
     "@aws-lambda-powertools/logger": "^1.18.1",
     "@aws-lambda-powertools/tracer": "^1.18.1",
-    "@middy/core": "~3"
+    "@aws-sdk/client-dynamodb": "^3.529.1",
+    "@aws-sdk/util-dynamodb": "^3.529.1",
+    "@middy/core": "~3",
+    "openapi-fetch": "^0.9.2"
   },
   "exports": {
     ".": {

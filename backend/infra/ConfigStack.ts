@@ -3,10 +3,33 @@ import {
   aws_iam as iam,
   aws_logs as logs,
 } from 'aws-cdk-lib';
-import { Config, Function, StackContext } from 'sst/constructs';
+import { Config, Function, StackContext, Table } from 'sst/constructs';
 import { generateApiSpec } from './api-definition';
 
 export function ConfigStack({ stack, app }: StackContext) {
+  const financialDataTable = new Table(stack, 'FinancialData', {
+    fields: {
+      pk: 'string',
+      sk: 'string',
+      email: 'string',
+      dob: 'string',
+      creditScore: 'number',
+      monthlyExpenses: 'number',
+      grossAnnualIncome: 'number',
+      employmentStatus: 'string',
+      borrowingCapacity: 'number',
+      loanApplicationStatus: 'string',
+      entity: 'string',
+    },
+    primaryIndex: {
+      partitionKey: 'pk',
+      sortKey: 'sk',
+    },
+  });
+  const { FINANCIAL_DATA_TABLE_NAME } = Config.Parameter.create(stack, {
+    FINANCIAL_DATA_TABLE_NAME: financialDataTable.tableName,
+  });
+
   const calculateBorrowingPowerHandler = new Function(
     stack,
     'calculateBorrowingPowerLambda',
@@ -19,12 +42,15 @@ export function ConfigStack({ stack, app }: StackContext) {
     handler: 'src/adaptors/primary/api-gw-apply-for-loan.handler',
     functionName: app.logicalPrefixedName('ApplyForLoan'),
   });
+
   const createBorrowerProfileHandler = new Function(
     stack,
     'createBorrowerProfileHandlerLambda',
     {
       handler: 'src/adaptors/primary/api-gw-create-borrower-profile.handler',
       functionName: app.logicalPrefixedName('CreateBorrowerProfile'),
+      bind: [FINANCIAL_DATA_TABLE_NAME],
+      permissions: [[financialDataTable.cdk.table, 'grantReadWriteData']],
     }
   );
 
