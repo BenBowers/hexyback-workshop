@@ -8,3 +8,4 @@ export type ApplyForLoanRequestBody =
   paths['/loan']['post']['requestBody']['content']['application/json'];
 export type ApplyForLoanResponse =
   paths['/loan']['post']['responses']['200']['content']['application/json'];
+export type BorrowerProfile = components['schemas']['Borrower'];

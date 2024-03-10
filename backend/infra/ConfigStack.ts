@@ -19,6 +19,14 @@ export function ConfigStack({ stack, app }: StackContext) {
     handler: 'src/adaptors/primary/api-gw-apply-for-loan.handler',
     functionName: app.logicalPrefixedName('ApplyForLoan'),
   });
+  const createBorrowerProfileHandler = new Function(
+    stack,
+    'createBorrowerProfileHandlerLambda',
+    {
+      handler: 'src/adaptors/primary/api-gw-create-borrower-profile.handler',
+      functionName: app.logicalPrefixedName('CreateBorrowerProfile'),
+    }
+  );
 
   const apiGatewayCloudwatchLogGroup = new logs.LogGroup(
     stack,
@@ -42,12 +50,28 @@ export function ConfigStack({ stack, app }: StackContext) {
       dataTraceEnabled: true,
     },
     apiDefinition: apigateway.ApiDefinition.fromInline(
-      generateApiSpec(
-        calculateBorrowingPowerHandler.functionArn,
-        applyForLoanHandler.functionArn
-      )
+      generateApiSpec({
+        calculateBorrowingPowerHandlerArn:
+          calculateBorrowingPowerHandler.functionArn,
+        applyForLoanHandlerArn: applyForLoanHandler.functionArn,
+        createBorrowerProfileHandlerArn:
+          createBorrowerProfileHandler.functionArn,
+      })
     ),
   });
+  createBorrowerProfileHandler.grantInvoke(
+    new iam.ServicePrincipal('apigateway.amazonaws.com', {
+      conditions: {
+        ArnLike: {
+          'aws:SourceArn': api.arnForExecuteApi(
+            'POST',
+            '/borrower',
+            api.deploymentStage.stageName
+          ),
+        },
+      },
+    })
+  );
   calculateBorrowingPowerHandler.grantInvoke(
     new iam.ServicePrincipal('apigateway.amazonaws.com', {
       conditions: {
