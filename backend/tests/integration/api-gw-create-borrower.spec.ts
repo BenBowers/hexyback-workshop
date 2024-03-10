@@ -3,7 +3,7 @@ import { paths } from '@openapi';
 import { randomUUID } from 'crypto';
 import openApiFetch from 'openapi-fetch';
 import { Config } from 'sst/node/config';
-import { describe, expect, it } from 'vitest';
+import { describe, it } from 'vitest';
 
 const baseUrl = Config.API_ENDPOINT;
 
@@ -12,7 +12,9 @@ describe.concurrent('api-aw-create-borrower', () => {
     baseUrl: baseUrl,
   });
 
-  it('responds with a 400 Bad Request given the user does not provide a valid borrower profile', async () => {
+  it('responds with a 400 Bad Request given the user does not provide a valid borrower profile', async ({
+    expect,
+  }) => {
     await expect(
       apiClient.POST('/borrower', {
         body: {
@@ -29,7 +31,9 @@ describe.concurrent('api-aw-create-borrower', () => {
       }),
     });
   });
-  it('responds with a 400 Bad Request given the user provides a credit score out of the valid range (0-1000)', async () => {
+  it('responds with a 400 Bad Request given the user provides a credit score out of the valid range (0-1000)', async ({
+    expect,
+  }) => {
     await expect(
       apiClient.POST('/borrower', {
         body: {
@@ -49,7 +53,9 @@ describe.concurrent('api-aw-create-borrower', () => {
       }),
     });
   });
-  it('responds with a 400 Bad Request given the user provides a date of birth that is not in ISO8601 date string', async () => {
+  it('responds with a 400 Bad Request given the user provides a date of birth that is not in ISO8601 date string', async ({
+    expect,
+  }) => {
     await expect(
       apiClient.POST('/borrower', {
         body: {
@@ -69,7 +75,9 @@ describe.concurrent('api-aw-create-borrower', () => {
       }),
     });
   });
-  it('responds with a 201 given the user provides a valid borrower profile and the borrower does not currently exist', async () => {
+  it('responds with a 201 given the user provides a valid borrower profile and the borrower does not currently exist', async ({
+    expect,
+  }) => {
     const email = `john.doe+${randomUUID()}@example.com`;
     await expect(
       apiClient.POST('/borrower', {
@@ -89,8 +97,26 @@ describe.concurrent('api-aw-create-borrower', () => {
       }),
     });
   });
-  it.todo(
+  it(
     'responds with a 200 given the user provides a valid borrower profile and the borrower already exists',
-    () => {}
+    async ({ expect }) => {
+      const borrowerProfile: BorrowerProfile = {
+        email: `john.doe+${randomUUID()}@example.com`,
+        creditScore: 500,
+        dob: '1990-01-01',
+        name: 'John Doe',
+      };
+      await apiClient.POST('/borrower', {
+        body: borrowerProfile,
+      });
+      expect(
+        apiClient.POST('/borrower', { body: borrowerProfile })
+      ).resolves.toEqual({
+        data: {
+          email: borrowerProfile.email,
+        },
+        response: expect.objectContaining({ status: 200 }),
+      });
+    }
   );
 });

@@ -3,7 +3,6 @@ import { paths } from '@openapi';
 import openApiFetch from 'openapi-fetch';
 import { Config } from 'sst/node/config';
 import { describe, it } from 'vitest';
-
 const baseUrl = Config.API_ENDPOINT;
 
 describe.concurrent('api-aw-apply-for-loan', () => {
