@@ -5,21 +5,30 @@ on:
     branches: ["main"] 
 
 jobs:
-  pr-lint-and-test:
+  Lint_and_Test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install Node.js
-        uses: actions/setup-node@v4
+      - name: Cache turbo build setup
+        uses: actions/cache@v4
         with:
-          node-version: 20 
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
       - uses: pnpm/action-setup@v3
         name: Install pnpm
         with:
           version: 8
           run_install: false
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20 
+          cache: 'pnpm'
       - name: Install 
         run: pnpm install
       - name: CI Checks 
-        run: pnpm turbo ci
+        run: pnpm turbo ci --cache-dir=.turbo
+     
