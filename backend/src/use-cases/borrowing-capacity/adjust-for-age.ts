@@ -1,7 +1,7 @@
 import {
   AdjustedForAge,
   AdjustedForEmploymentStatus,
-} from '@/entities/BorrowingPowerCalculation';
+} from '@/entities/BorrowingCapacityCalculation';
 
 export const adjustForAge = (
   borrowingPowerCalculation: AdjustedForEmploymentStatus

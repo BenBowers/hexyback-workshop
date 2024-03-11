@@ -1,4 +1,6 @@
 import { BorrowerProfile } from '@/types/api';
+import { DeleteItemCommand, DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { marshall } from '@aws-sdk/util-dynamodb';
 import { paths } from '@openapi';
 import { randomUUID } from 'crypto';
 import openApiFetch from 'openapi-fetch';
@@ -6,7 +8,14 @@ import { Config } from 'sst/node/config';
 import { describe, it } from 'vitest';
 
 const baseUrl = Config.API_ENDPOINT;
-
+const dynamodbClient = new DynamoDBClient({});
+const deleteBorrowerProfile = (email: string) =>
+  dynamodbClient.send(
+    new DeleteItemCommand({
+      TableName: Config.FINANCIAL_DATA_TABLE_NAME,
+      Key: marshall({ pk: email, sk: 'BORROWER' }),
+    })
+  );
 describe.concurrent('api-aw-create-borrower', () => {
   const apiClient = openApiFetch<paths>({
     baseUrl: baseUrl,
@@ -96,27 +105,30 @@ describe.concurrent('api-aw-create-borrower', () => {
         status: 201,
       }),
     });
+
+    await deleteBorrowerProfile(email);
   });
-  it(
-    'responds with a 200 given the user provides a valid borrower profile and the borrower already exists',
-    async ({ expect }) => {
-      const borrowerProfile: BorrowerProfile = {
-        email: `john.doe+${randomUUID()}@example.com`,
-        creditScore: 500,
-        dob: '1990-01-01',
-        name: 'John Doe',
-      };
-      await apiClient.POST('/borrower', {
-        body: borrowerProfile,
-      });
-      expect(
-        apiClient.POST('/borrower', { body: borrowerProfile })
-      ).resolves.toEqual({
-        data: {
-          email: borrowerProfile.email,
-        },
-        response: expect.objectContaining({ status: 200 }),
-      });
-    }
-  );
+  it('responds with a 200 given the user provides a valid borrower profile and the borrower already exists', async ({
+    expect,
+  }) => {
+    const borrowerProfile: BorrowerProfile = {
+      email: `john.doe+${randomUUID()}@example.com`,
+      creditScore: 500,
+      dob: '1990-01-01',
+      name: 'John Doe',
+    };
+    await apiClient.POST('/borrower', {
+      body: borrowerProfile,
+    });
+    expect(
+      apiClient.POST('/borrower', { body: borrowerProfile })
+    ).resolves.toEqual({
+      data: {
+        email: borrowerProfile.email,
+      },
+      response: expect.objectContaining({ status: 200 }),
+    });
+
+    await deleteBorrowerProfile(borrowerProfile.email);
+  });
 });

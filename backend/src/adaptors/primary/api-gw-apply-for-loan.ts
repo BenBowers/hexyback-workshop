@@ -1,4 +1,4 @@
-import { ApplyForLoanResponse } from '@/types/api';
+import { ApplyForLoanResponse, LoanApplication } from '@/types/api';
 import { assessLoanApplication } from '@/use-cases/loan-assessment/assess-loan-application';
 import { Logger, injectLambdaContext } from '@aws-lambda-powertools/logger';
 import { Tracer, captureLambdaHandler } from '@aws-lambda-powertools/tracer';
@@ -18,14 +18,15 @@ const logger = new Logger();
 export const lambdaHandler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent
 ) => {
-  const { age, grossIncome, employmentStatus, monthlyExpenses, creditScore } =
-    JSON.parse(event.body as string);
+  const { grossAnnualIncome, employmentStatus, monthlyExpenses } = JSON.parse(
+    event.body!
+  ) as LoanApplication;
   const loanApplicationStatus = await assessLoanApplication({
-    age,
-    grossIncome,
+    age: 20,
+    creditScore: 500,
+    grossAnnualIncome: grossAnnualIncome,
     employmentStatus,
     monthlyExpenses,
-    creditScore,
   });
   return {
     statusCode: 200,

@@ -10,14 +10,14 @@ describe('Loan Application Evaluation', () => {
     const youngApplicant: DetailedBorrowerProfile = {
       age: 17,
       employmentStatus: 'FULL_TIME',
-      grossIncome: 50000,
+      grossAnnualIncome: 50000,
       monthlyExpenses: 1500,
       creditScore: 650,
     };
     const oldApplicant: DetailedBorrowerProfile = {
       age: 101,
       employmentStatus: 'FULL_TIME',
-      grossIncome: 50000,
+      grossAnnualIncome: 50000,
       monthlyExpenses: 1500,
       creditScore: 650,
     };
@@ -30,7 +30,7 @@ describe('Loan Application Evaluation', () => {
     const applicant: DetailedBorrowerProfile = {
       age: 25,
       employmentStatus: 'FULL_TIME',
-      grossIncome: 50000,
+      grossAnnualIncome: 50000,
       monthlyExpenses: 2000,
       creditScore: 250,
     };
@@ -42,7 +42,7 @@ describe('Loan Application Evaluation', () => {
     const applicant: DetailedBorrowerProfile = {
       age: 30,
       employmentStatus: 'FULL_TIME',
-      grossIncome: 60000,
+      grossAnnualIncome: 60000,
       monthlyExpenses: 1500,
       creditScore: 400,
     };
@@ -53,7 +53,7 @@ describe('Loan Application Evaluation', () => {
     const applicant: DetailedBorrowerProfile = {
       age: 30,
       employmentStatus: 'FULL_TIME',
-      grossIncome: 60000,
+      grossAnnualIncome: 60000,
       monthlyExpenses: 2500,
       creditScore: 400,
     };
@@ -64,7 +64,7 @@ describe('Loan Application Evaluation', () => {
     const applicant: DetailedBorrowerProfile = {
       age: 30,
       employmentStatus: 'FULL_TIME',
-      grossIncome: 60000,
+      grossAnnualIncome: 60000,
       monthlyExpenses: 35000,
       creditScore: 400,
     };
@@ -150,8 +150,8 @@ describe('Loan Application Evaluation', () => {
   scenarios.forEach(
     ({ creditScore, result, dtiBoundary, employmentStatus, finalOutcome }) => {
       it(`should ${finalOutcome}`, () => {
-        const grossIncome = 100000;
-        const monthlyProratedGrossIncome = grossIncome / 12;
+        const grossAnnualIncome = 100000;
+        const monthlyProratedGrossIncome = grossAnnualIncome / 12;
         const dtiBoundaryToMonthlyExpenses: Record<DtiBoundary, number> = {
           low: 0.24 * monthlyProratedGrossIncome,
           medium: 0.36 * monthlyProratedGrossIncome,
@@ -160,7 +160,7 @@ describe('Loan Application Evaluation', () => {
         const applicant: DetailedBorrowerProfile = {
           age: 35,
           employmentStatus,
-          grossIncome,
+          grossAnnualIncome,
           monthlyExpenses: dtiBoundaryToMonthlyExpenses[dtiBoundary],
           creditScore: creditScore,
         };

@@ -30,12 +30,15 @@ export function ConfigStack({ stack, app }: StackContext) {
     FINANCIAL_DATA_TABLE_NAME: financialDataTable.tableName,
   });
 
-  const calculateBorrowingPowerHandler = new Function(
+  const calculateBorrowingCapacityHandler = new Function(
     stack,
-    'calculateBorrowingPowerLambda',
+    'calculateBorrowingCapacityLambda',
     {
-      handler: 'src/adaptors/primary/api-gw-calculate-borrowing-power.handler',
-      functionName: app.logicalPrefixedName('CalculateBorrowingPower'),
+      handler:
+        'src/adaptors/primary/api-gw-calculate-borrowing-capacity.handler',
+      functionName: app.logicalPrefixedName('CalculateBorrowingCapacity'),
+      bind: [FINANCIAL_DATA_TABLE_NAME],
+      permissions: [[financialDataTable.cdk.table, 'grantReadWriteData']],
     }
   );
   const applyForLoanHandler = new Function(stack, 'applyForLoanHandlerLambda', {
@@ -77,8 +80,8 @@ export function ConfigStack({ stack, app }: StackContext) {
     },
     apiDefinition: apigateway.ApiDefinition.fromInline(
       generateApiSpec({
-        calculateBorrowingPowerHandlerArn:
-          calculateBorrowingPowerHandler.functionArn,
+        calculateBorrowingCapacityHandlerArn:
+          calculateBorrowingCapacityHandler.functionArn,
         applyForLoanHandlerArn: applyForLoanHandler.functionArn,
         createBorrowerProfileHandlerArn:
           createBorrowerProfileHandler.functionArn,
@@ -98,7 +101,7 @@ export function ConfigStack({ stack, app }: StackContext) {
       },
     })
   );
-  calculateBorrowingPowerHandler.grantInvoke(
+  calculateBorrowingCapacityHandler.grantInvoke(
     new iam.ServicePrincipal('apigateway.amazonaws.com', {
       conditions: {
         ArnLike: {

@@ -1,6 +1,6 @@
-import { BorrowerProfile } from './BorrowerProfile';
+import { BorrowingCapacityCalculationInput } from './BorrowingCapacityCalculationInput';
 
-export type DetailedBorrowerProfile = BorrowerProfile & {
+export type DetailedBorrowerProfile = BorrowingCapacityCalculationInput & {
   monthlyExpenses: number;
   creditScore: number;
 };

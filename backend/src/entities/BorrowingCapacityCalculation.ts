@@ -1,7 +1,7 @@
-import { BorrowerProfile } from './BorrowerProfile';
+import { BorrowingCapacityCalculationInput } from './BorrowingCapacityCalculationInput';
 
 export type BaseBorrowingCapacity = {
-  borrowerProfile: BorrowerProfile;
+  borrowerProfile: BorrowingCapacityCalculationInput;
   baseBorrowingCapacity: number;
 };
 
