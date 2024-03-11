@@ -2,6 +2,7 @@ import { getBorrowerProfile } from '@/adaptors/secondary/ddb-get-borrower-profil
 import { putBorrowingCapacityCalculation } from '@/adaptors/secondary/ddb-put-borrowing-capacity-calculation';
 import { BorrowerProfileDoesNotExistError } from '@/errors/BorrowerProfileDoesNotExistError';
 import { InternalError } from '@/errors/InternalError';
+import { CalculateBorrowingCapacityInput } from '@/ports/primary/CalculateBorrowingCapacity';
 import { BorrowerProfile } from '@/types/api';
 import {
   afterAll,
@@ -12,10 +13,7 @@ import {
   it,
   vi,
 } from 'vitest';
-import {
-  CalculateBorrowingCapacityInput,
-  calculateBorrowingCapacity,
-} from './calculate-borrowing-capacity';
+import { calculateBorrowingCapacity } from './calculate-borrowing-capacity';
 describe('borrowing-capacity', () => {
   vi.mock('@/adaptors/secondary/ddb-get-borrower-profile', () => ({
     getBorrowerProfile: vi.fn(() => Promise.resolve(undefined)),

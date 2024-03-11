@@ -1,20 +1,8 @@
 import { InternalError } from '@/errors/InternalError';
-import { EmploymentStatus } from '@/types/api';
+import { PutBorrowingCapacityCalculationPort } from '@/ports/secondary/DynamoDBPutBorrowingCapacityCalculation';
 import { DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb';
 import { marshall } from '@aws-sdk/util-dynamodb';
 import { Config } from 'sst/node/config';
-
-export type PutBorrowingCapacityCalculationInput = {
-  borrowingCapacityCalculationId: string;
-  borrowerEmail: string;
-  estimatedBorrowingCapacity: number;
-  timestamp: string;
-  grossAnnualIncome: number;
-  employmentStatus: EmploymentStatus;
-};
-export type PutBorrowingCapacityCalculationPort = (
-  borrowingCapacityCalculation: PutBorrowingCapacityCalculationInput
-) => Promise<undefined>;
 
 const dynamoDbClient = new DynamoDBClient();
 

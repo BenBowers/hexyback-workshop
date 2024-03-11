@@ -1,49 +1,15 @@
 ---
 sidebar_position: 1
 tags:
-  - test
+  - introduction
 ---
 
-# Tutorial Intro
+# Introduction
 
-Let's discover **Docusaurus in less than 5 minutes**.
+Greetings and a warm welcome to all participants! You've taken the first step towards mastering the intricacies of cloud-based financial services applications by joining us at the 'I'm Bringin' Hexy Back' workshop. This educational journey is designed for enthusiastic learners like you, aiming to demystify the complexities of cloud technology and application architecture.
 
-## Getting Started
+Throughout this workshop, we will dive deep into the principles of building scalable and maintainable software. By focusing on a financial services application, we aim to provide you with real-world scenarios and challenges. This approach not only enhances learning but also equips you with practical skills that are immediately applicable in professional settings.
 
-Get started by **creating a new site**.
+Our curriculum is structured around the concept of [hexagonal architecture](<https://en.wikipedia.org/wiki/Hexagonal_architecture_(software)>), also known as the ports and adapters pattern. This architectural style promotes the separation of concerns, making your applications more modular, easier to test, and adaptable to changes in external services or databases. By embracing this architecture, you'll learn to construct systems that are resilient to infrastructure changes and technological advances.
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
-
-### What you'll need
-
-- [Node.js](https://nodejs.org/en/download/) version 14 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
-
-## Generate a new site
-
-Generate a new Docusaurus site using the **classic template**.
-
-The classic template will automatically be added to your project after you run the command:
-
-```bash
-npm init docusaurus@latest my-website classic
-```
-
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
-
-The command also installs all necessary dependencies you need to run Docusaurus.
-
-## Start your site
-
-Run the development server:
-
-```bash
-cd my-website
-npm run start
-```
-
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
-
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
-
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+To streamline our development and deployment processes, we'll employ [SST (Serverless Stack)](https://sst.dev/), a modern framework designed to simplify the building and managing of serverless applications on AWS. SST features live Lambda development, which means you can test your Lambda functions locally without redeploying them to the cloud. This immediate feedback loop accelerates the development cycle and enhances your understanding of cloud infrastructure.

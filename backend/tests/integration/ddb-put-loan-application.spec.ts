@@ -1,7 +1,5 @@
-import {
-  PutLoanApplicationInput,
-  putLoanApplication,
-} from '@/adaptors/secondary/ddb-put-loan-application';
+import { putLoanApplication } from '@/adaptors/secondary/ddb-put-loan-application';
+import { PutLoanApplicationInput } from '@/ports/secondary/DynamoDBPutLoanApplication';
 import {
   DeleteItemCommand,
   DynamoDBClient,

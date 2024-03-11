@@ -1,21 +1,10 @@
 import { getBorrowerProfile } from '@/adaptors/secondary/ddb-get-borrower-profile';
 import { putLoanApplication } from '@/adaptors/secondary/ddb-put-loan-application';
-import { LoanApplicationStatus } from '@/entities/LoanApplicationStatus';
 import { BorrowerProfileDoesNotExistError } from '@/errors/BorrowerProfileDoesNotExistError';
-import { EmploymentStatus } from '@/types/api';
+import { ProcessLoanApplicationPort } from '@/ports/primary/ProcessLoanApplication';
 import { getYearsSinceCurrentDate } from '@/utils/get-years-since-current-date';
 import { randomUUID } from 'crypto';
 import { assessLoanApplication } from './assess-loan-application';
-
-export type ProcessLoanApplicationInput = {
-  borrowerEmail: string;
-  grossAnnualIncome: number;
-  employmentStatus: EmploymentStatus;
-  monthlyExpenses: number;
-};
-export type ProcessLoanApplicationPort = (
-  ProcessLoanApplicationInput: ProcessLoanApplicationInput
-) => Promise<LoanApplicationStatus>;
 
 const calculateAge = (dateOfBirth: Date): number =>
   getYearsSinceCurrentDate(dateOfBirth);

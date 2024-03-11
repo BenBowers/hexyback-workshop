@@ -6,9 +6,12 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "I'm bringing hexy back",
-  tagline: "those other frameworks don't know how to act",
-  url: 'https://your-docusaurus-test-site.com',
+  markdown: {
+    mermaid: true,
+  },
+  title: "I'm bringing Hexy Back",
+  tagline: "Those other frameworks don't know how to act",
+  url: 'https://journeyone.com.au',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -16,8 +19,8 @@ const config = {
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  // organizationName: 'journeyone', // Usually your GitHub org/user name.
+  // projectName: 'hexy-back-workshop', // Usually your repo name.
 
   presets: [
     [
@@ -49,9 +52,9 @@ const config = {
         },
       },
       navbar: {
-        title: "I'm bringing hexy back",
+        title: "I'm Bringin' Hexy Back",
         logo: {
-          alt: 'My Site Logo',
+          alt: 'Hexy Site Logo',
           src: 'img/logo.svg',
         },
         items: [
@@ -59,17 +62,12 @@ const config = {
             type: 'doc',
             docId: 'intro',
             position: 'left',
-            label: 'Tutorial',
+            label: 'Workshop',
           },
           {
             label: 'Hexy API',
             position: 'left',
             to: '/docs/category/hexy-api',
-          },
-          {
-            href: 'https://github.com/facebook/docusaurus',
-            label: 'GitHub',
-            position: 'right',
           },
         ],
       },
@@ -89,30 +87,13 @@ const config = {
             title: 'Community',
             items: [
               {
-                label: 'Stack Overflow',
-                href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-              },
-              {
-                label: 'Discord',
-                href: 'https://discordapp.com/invite/docusaurus',
-              },
-              {
-                label: 'Twitter',
-                href: 'https://twitter.com/docusaurus',
-              },
-            ],
-          },
-          {
-            title: 'More',
-            items: [
-              {
-                label: 'GitHub',
-                href: 'https://github.com/facebook/docusaurus',
+                label: 'LinkedIn',
+                href: 'https://www.linkedin.com/company/journey-one/',
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} I'm Bringin' Hexy Back - Workshop.`,
       },
       prism: {
         theme: lightCodeTheme,
@@ -136,21 +117,12 @@ const config = {
               categoryLinkSource: 'tag',
             },
           },
-          creditScoreService: {
-            specPath:
-              'node_modules/@hexy/backend/openapi/credit-score-service-api-spec.json',
-            outputDir: 'docs/credit-score-service-api',
-            sidebarOptions: {
-              groupPathsBy: 'tag',
-              categoryLinkSource: 'tag',
-            },
-          },
         },
       },
     ],
   ],
 
-  themes: ['docusaurus-theme-openapi-docs'],
+  themes: ['docusaurus-theme-openapi-docs', '@docusaurus/theme-mermaid'],
 };
 
 module.exports = config;

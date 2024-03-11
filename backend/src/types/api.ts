@@ -12,3 +12,5 @@ export type BorrowerProfile = components['schemas']['Borrower'];
 export type CalculateBaseBorrowingCapacityInput =
   paths['/borrowingCapacity']['get']['parameters']['query'];
 export type LoanApplication = components['schemas']['LoanApplication'];
+export type LoanApplicationStatus =
+  components['schemas']['LoanApplicationStatus'];
