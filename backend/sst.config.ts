@@ -22,7 +22,7 @@ export default {
         esbuild: {
           keepNames: false,
           minify: true,
-          external: ['@aws-sdk/*'],
+          external: process.env.IS_LOCAL ? ['@aws-sdk/*'] : undefined,
         },
       },
     });
