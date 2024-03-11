@@ -22,7 +22,7 @@ export const assessLoanApplication = async (
   if (applicant.creditScore < invalidCreditScoreUpperBoundary) {
     return 'REJECTED';
   }
-  const monthlyProratedGrossIncome = applicant.grossIncome / 12;
+  const monthlyProratedGrossIncome = applicant.grossAnnualIncome / 12;
   // Calculate DTI (Debt-to-Income Ratio)
   const dti = applicant.monthlyExpenses / monthlyProratedGrossIncome;
 

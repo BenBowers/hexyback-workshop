@@ -1,10 +1,10 @@
 export type GenerateApiDependencies = {
-  calculateBorrowingPowerHandlerArn: string;
+  calculateBorrowingCapacityHandlerArn: string;
   applyForLoanHandlerArn: string;
   createBorrowerProfileHandlerArn: string;
 };
 export const generateApiSpec = ({
-  calculateBorrowingPowerHandlerArn,
+  calculateBorrowingCapacityHandlerArn,
   applyForLoanHandlerArn,
   createBorrowerProfileHandlerArn,
 }: GenerateApiDependencies) => ({
@@ -26,28 +26,23 @@ export const generateApiSpec = ({
       LoanApplication: {
         type: 'object',
         required: [
-          'age',
-          'grossIncome',
+          'borrowerEmail',
           'employmentStatus',
-          'grossIncome',
-          'creditScore',
+          'grossAnnualIncome',
           'monthlyExpenses',
         ],
         properties: {
-          grossIncome: {
+          borrowerEmail: {
+            type: 'string',
+          },
+          employmentStatus: {
+            $ref: '#/components/schemas/EmploymentStatus',
+          },
+          grossAnnualIncome: {
             type: 'integer',
           },
           monthlyExpenses: {
             type: 'integer',
-          },
-          creditScore: {
-            type: 'integer',
-          },
-          age: {
-            type: 'integer',
-          },
-          employmentStatus: {
-            $ref: '#/components/schemas/EmploymentStatus',
           },
         },
       },
@@ -164,19 +159,19 @@ export const generateApiSpec = ({
     },
     '/borrowingCapacity': {
       get: {
-        summary: 'Get an estimate of your borrowing power',
+        summary: 'Get an estimate of your borrowing capacity',
         parameters: [
           {
-            name: 'age',
-            description: 'Age of the borrower',
+            name: 'borrowerEmail',
+            description: 'Email address of the borrower',
             in: 'query',
             required: true,
             schema: {
-              type: 'integer',
+              type: 'string',
             },
           },
           {
-            name: 'grossIncome',
+            name: 'grossAnnualIncome',
             description: 'Gross annual income of the borrower',
             in: 'query',
             required: true,
@@ -212,6 +207,22 @@ export const generateApiSpec = ({
               },
             },
           },
+          '400': {
+            description: 'Bad Request',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['message'],
+                  properties: {
+                    message: {
+                      type: 'string',
+                    },
+                  },
+                },
+              },
+            },
+          },
           '500': {
             description: 'Internal Server Error',
             content: {
@@ -230,7 +241,7 @@ export const generateApiSpec = ({
           },
         },
         'x-amazon-apigateway-integration': {
-          uri: `arn:\${AWS::Partition}:apigateway:\${AWS::Region}:lambda:path/2015-03-31/functions/${calculateBorrowingPowerHandlerArn}/invocations`,
+          uri: `arn:\${AWS::Partition}:apigateway:\${AWS::Region}:lambda:path/2015-03-31/functions/${calculateBorrowingCapacityHandlerArn}/invocations`,
           responses: {
             default: {
               statusCode: '200',

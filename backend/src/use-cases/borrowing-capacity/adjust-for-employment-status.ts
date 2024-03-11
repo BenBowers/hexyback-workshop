@@ -1,7 +1,7 @@
 import {
   AdjustedForEmploymentStatus,
   BaseBorrowingCapacity,
-} from '@/entities/BorrowingPowerCalculation';
+} from '@/entities/BorrowingCapacityCalculation';
 import { EmploymentStatus } from '@/types/api';
 
 export const adjustForEmploymentStatus = (

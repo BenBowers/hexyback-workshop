@@ -9,3 +9,6 @@ export type ApplyForLoanRequestBody =
 export type ApplyForLoanResponse =
   paths['/loan']['post']['responses']['200']['content']['application/json'];
 export type BorrowerProfile = components['schemas']['Borrower'];
+export type CalculateBaseBorrowingCapacityInput =
+  paths['/borrowingCapacity']['get']['parameters']['query'];
+export type LoanApplication = components['schemas']['LoanApplication'];

@@ -15,30 +15,26 @@ describe('api gw apply for loan', () => {
       'extracts the age, grossIncome and employmentStatus, creditScore and monthlyExpenses from the request body ' +
         'and calls the assess loan application use case',
       async () => {
-        const age = 20;
-        const grossIncome = 60_000;
+        const grossAnnualIncome = 60_000;
         const employmentStatus: EmploymentStatus = 'FULL_TIME';
         const monthlyExpenses = 1500;
-        const creditScore = 600;
         await handler(
           {
             body: JSON.stringify({
-              age,
-              grossIncome,
+              grossAnnualIncome,
               employmentStatus,
               monthlyExpenses,
-              creditScore,
             }),
           } as unknown as APIGatewayProxyEvent,
           {} as Context,
           () => {}
         );
         expect(assessLoanApplicationSpy).toHaveBeenCalledWith({
-          age,
-          grossIncome,
+          grossAnnualIncome,
           employmentStatus,
           monthlyExpenses,
-          creditScore,
+          age: 20,
+          creditScore: 500,
         });
       }
     );

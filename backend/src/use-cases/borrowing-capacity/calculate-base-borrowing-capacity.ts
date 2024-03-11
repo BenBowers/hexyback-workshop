@@ -1,11 +1,11 @@
-import { BorrowerProfile } from '@/entities/BorrowerProfile';
-import { BaseBorrowingCapacity } from '@/entities/BorrowingPowerCalculation';
+import { BaseBorrowingCapacity } from '@/entities/BorrowingCapacityCalculation';
+import { BorrowingCapacityCalculationInput } from '@/entities/BorrowingCapacityCalculationInput';
 
 export const calculateBaseBorrowingCapacity = (
-  borrowerProfile: BorrowerProfile
+  borrowerProfile: BorrowingCapacityCalculationInput
 ): BaseBorrowingCapacity => {
   return {
     borrowerProfile,
-    baseBorrowingCapacity: borrowerProfile.grossIncome * 0.3,
+    baseBorrowingCapacity: borrowerProfile.grossAnnualIncome * 0.3,
   };
 };
