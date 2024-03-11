@@ -92,7 +92,7 @@ describe('api gw calculate borrowing capacity', () => {
     describe('given the use case resolves', () => {
       it(
         'resolves with a status code 200 and a body containing a json serialized object ' +
-          'with key estimatedBOrrowingCapacity set to the result of calculateBorrowingCapacity',
+          'with key estimatedBorrowingCapacity set to the result of calculateBorrowingCapacity',
         async () => {
           calculateBorrowingCapacitySpy.mockResolvedValue(200_000);
           await expect(

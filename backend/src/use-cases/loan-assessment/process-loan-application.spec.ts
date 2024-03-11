@@ -2,6 +2,7 @@ import { getBorrowerProfile } from '@/adaptors/secondary/ddb-get-borrower-profil
 import { putLoanApplication } from '@/adaptors/secondary/ddb-put-loan-application';
 import { BorrowerProfileDoesNotExistError } from '@/errors/BorrowerProfileDoesNotExistError';
 import { InternalError } from '@/errors/InternalError';
+import { ProcessLoanApplicationInput } from '@/ports/primary/ProcessLoanApplication';
 import { BorrowerProfile } from '@/types/api';
 import {
   afterAll,
@@ -13,10 +14,7 @@ import {
   vi,
 } from 'vitest';
 import { assessLoanApplication } from './assess-loan-application';
-import {
-  ProcessLoanApplicationInput,
-  processLoanApplication,
-} from './process-loan-application';
+import { processLoanApplication } from './process-loan-application';
 
 describe('process loan-application', () => {
   vi.mock('@/adaptors/secondary/ddb-get-borrower-profile', () => ({

@@ -1,7 +1,5 @@
-import {
-  PutBorrowingCapacityCalculationInput,
-  putBorrowingCapacityCalculation,
-} from '@/adaptors/secondary/ddb-put-borrowing-capacity-calculation';
+import { putBorrowingCapacityCalculation } from '@/adaptors/secondary/ddb-put-borrowing-capacity-calculation';
+import { PutBorrowingCapacityCalculationInput } from '@/ports/secondary/DynamoDBPutBorrowingCapacityCalculation';
 import {
   DeleteItemCommand,
   DynamoDBClient,

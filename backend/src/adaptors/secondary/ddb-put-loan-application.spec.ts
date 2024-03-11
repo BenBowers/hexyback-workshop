@@ -1,12 +1,10 @@
 import { InternalError } from '@/errors/InternalError';
+import { PutLoanApplicationInput } from '@/ports/secondary/DynamoDBPutLoanApplication';
 import { DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb';
 import { mockClient } from 'aws-sdk-client-mock';
 import 'aws-sdk-client-mock-jest';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  PutLoanApplicationInput,
-  putLoanApplication,
-} from './ddb-put-loan-application';
+import { putLoanApplication } from './ddb-put-loan-application';
 
 describe('ddb-put-loan-application', () => {
   vi.mock('sst/node/config', () => ({

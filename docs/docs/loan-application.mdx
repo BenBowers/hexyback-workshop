@@ -1,0 +1,127 @@
+---
+sidebar_position: 8
+tags:
+  - loan-application
+---
+# Loan Application
+
+## Applying for a Loan
+
+1. User initiates a request to apply for a loan through a client application.
+2. The request is received by the primary adaptor: `api-gw-apply-for-loan`.
+3. The primary adaptor validates the request and forwards it to the `process-loan-application` use case in the domain layer.
+4. The `process-loan-application` use case interacts with the `ddb-get-borrower-profile` secondary adapter to retrieve borrower details from DynamoDB.
+5. The `process-loan-application` use case processes the application and uses a secondary adaptor `ddb-put-loan-application` to persist the loan application to DynamoDB.
+6. The loan application application status is returned to the user through the primary adaptor.
+
+![Process Loan Application](/img/loan-application/process-loan-application.svg)
+
+## `process-loan-application` Use Case
+
+```mermaid
+flowchart TD
+    A[Start: Process Loan Application] --> B{Retrieve Borrower Profile}
+    B -- Profile Exists --> C[Assess Loan Application]
+    B -- Profile Does Not Exist --> D[Throw BorrowerProfileDoesNotExistError]
+    C --> E[Record Loan Application]
+    E --> F[Return Loan Application Status]
+    D --> End[End Process]
+    F --> End
+```
+
+### Assess Loan Application
+
+```mermaid
+flowchart TD
+    A[Start: Assess Loan Application] --> B{Check Age between 18-100}
+    B -- Age Invalid --> C[Return 'REJECTED']
+    B -- Age Valid --> D{Check Credit Score}
+    D -- Credit Score < 300 --> C
+    D -- Credit Score Valid --> E[Calculate DTI]
+    E --> F{Credit Score < 500}
+    F -- Yes --> G{DTI < 0.35}
+    F -- No --> H{Credit Score < 700}
+    G -- Yes --> I[Return 'APPROVED']
+    G -- No --> J{DTI <= 0.5}
+    J -- Yes --> K[Return 'REVIEW']
+    J -- No --> C
+    H -- Yes --> L{DTI < 0.35}
+    H -- No --> M{Credit Score >= 700}
+    L -- Yes --> N{Employment Status = FULL_TIME}
+    L -- No --> O{DTI <= 0.5}
+    N -- Yes --> I
+    N -- No --> K
+    O -- Yes --> K
+    O -- No --> C
+    M -- Yes --> P{DTI < 0.35}
+    M -- No --> C
+    P -- Yes --> Q{Employment Status = FULL_TIME}
+    P -- No --> K
+    Q -- Yes --> I
+    Q -- No --> K
+
+    classDef legend fill:#f9f,stroke:#333,stroke-width:2px;
+    class A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q legend;
+```
+
+## Scenarios
+
+### Loan Application Completed (200)
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant PrimaryAdaptor as API GW: Apply For Loan
+    participant ApplyForLoanUseCase as Apply For Loan Use Case
+    participant GetBorrowerProfileSecondaryAdapter as DynamoDB: Get Borrower Profile
+    participant PutLoanApplicationSecondaryAdaptor as DynamoDB: Put Loan Application
+    
+    User->>+PrimaryAdaptor: Apply For Loan
+    PrimaryAdaptor->>+ApplyForLoanUseCase: Validate & Forward Request
+    ApplyForLoanUseCase->>+GetBorrowerProfileSecondaryAdapter: Get Borrower Profile 
+    GetBorrowerProfileSecondaryAdapter-->>-ApplyForLoanUseCase: Borrower Profile
+    ApplyForLoanUseCase-->>ApplyForLoanUseCase: Assess Loan Application 
+    ApplyForLoanUseCase->>+PutLoanApplicationSecondaryAdaptor: Put Loan Application 
+    PutLoanApplicationSecondaryAdaptor-->>-ApplyForLoanUseCase: Loan Application Status
+    ApplyForLoanUseCase-->>-PrimaryAdaptor: Loan Application Status 
+    PrimaryAdaptor-->>-User: {statusCode: 200, body: {loanApplicationStatus} }
+```
+
+### Loan Application Could Not Be Created (500)
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant PrimaryAdaptor as API GW: Assess Loan Application 
+    participant ApplyForLoanUseCase as Apply For Loan Use Case
+    participant GetBorrowerProfileSecondaryAdapter as DynamoDB: Get Borrower Profile
+    participant PutLoanApplicationSecondaryAdaptor as DynamoDB: Put Loan Application
+    
+    User->>+PrimaryAdaptor: Apply For Loan
+    PrimaryAdaptor->>+ApplyForLoanUseCase: Validate & Forward Request
+    ApplyForLoanUseCase->>+GetBorrowerProfileSecondaryAdapter: Get Borrower Profile 
+    GetBorrowerProfileSecondaryAdapter-->>-ApplyForLoanUseCase: Borrower Profile
+    ApplyForLoanUseCase-->>ApplyForLoanUseCase: Assess Loan Application 
+    ApplyForLoanUseCase->>+PutLoanApplicationSecondaryAdaptor: Put Loan Application 
+    PutLoanApplicationSecondaryAdaptor-->>-ApplyForLoanUseCase: throws InternalError
+    ApplyForLoanUseCase-->>-PrimaryAdaptor: throws InternalServerError
+    PrimaryAdaptor-->>-User: {statusCode: 500, message: Internal Server Error}
+```
+
+### Borrower Does Not Exist (400)
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant PrimaryAdaptor as API GW: Assess Loan Application 
+    participant ApplyForLoanUseCase as Apply For Loan Use Case
+    participant GetBorrowerProfileSecondaryAdapter as DynamoDB: Get Borrower Profile
+    participant PutLoanApplicationSecondaryAdaptor as DynamoDB: Put Loan Application
+    
+    User->>+PrimaryAdaptor: Apply For Loan
+    PrimaryAdaptor->>+ApplyForLoanUseCase: Validate & Forward Request
+    ApplyForLoanUseCase->>+GetBorrowerProfileSecondaryAdapter: Get Borrower Profile 
+    GetBorrowerProfileSecondaryAdapter-->>-ApplyForLoanUseCase: throws BorrowerProfileDoesNotExistError
+    ApplyForLoanUseCase-->>-PrimaryAdaptor: throws InternalServerError
+    PrimaryAdaptor-->>-User: {statusCode: 400, message: 'Borrower with the provided email does not exist'}
+```

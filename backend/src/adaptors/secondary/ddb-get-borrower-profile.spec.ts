@@ -1,5 +1,5 @@
+import { BorrowerProfile } from '@/entities/BorrowerProfile';
 import { InternalError } from '@/errors/InternalError';
-import { BorrowerProfile } from '@/types/api';
 import {
   DynamoDBClient,
   GetItemCommand,

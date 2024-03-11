@@ -1,21 +1,13 @@
 import { getBorrowerProfile } from '@/adaptors/secondary/ddb-get-borrower-profile';
 import { putBorrowingCapacityCalculation } from '@/adaptors/secondary/ddb-put-borrowing-capacity-calculation';
 import { BorrowerProfileDoesNotExistError } from '@/errors/BorrowerProfileDoesNotExistError';
+import { CalculateBorrowingCapacityPort } from '@/ports/primary/CalculateBorrowingCapacity';
 import { EmploymentStatus } from '@/types/api';
 import { getYearsSinceCurrentDate } from '@/utils/get-years-since-current-date';
 import { randomUUID } from 'node:crypto';
 import { adjustForAge } from './adjust-for-age';
 import { adjustForEmploymentStatus } from './adjust-for-employment-status';
 import { calculateBaseBorrowingCapacity } from './calculate-base-borrowing-capacity';
-export type CalculateBorrowingCapacityInput = {
-  borrowerEmail: string;
-  grossAnnualIncome: number;
-  employmentStatus: EmploymentStatus;
-};
-
-export type CalculateBorrowingCapacityPort = (
-  borrowingCapacityInput: CalculateBorrowingCapacityInput
-) => Promise<number>;
 
 const calculateAge = (dateOfBirth: Date): number =>
   getYearsSinceCurrentDate(dateOfBirth);

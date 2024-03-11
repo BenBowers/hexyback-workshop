@@ -1,0 +1,105 @@
+---
+sidebar_position: 6
+tags:
+  - borrower-profile
+---
+
+# Borrower Profile
+
+![Create Borrower Profile Overview](/img/borrower/create-borrower-profile-overview.svg)
+
+## Creating a Borrower Profile
+
+1. A user submits their details to create a borrower profile via the client application.
+2. This request is captured by the `api-gw-create-borrower-profile` primary adaptor.
+3. The `api-gw-create-borrower-profile` primary adaptor sends the profile details to the `create-borrower-profile` use case in the domain layer.
+4. The the `create-borrower-profile` use case validates and processes the details, then employs the `ddb-put-borrower-profile` secondary adapter to store the profile in DynamoDB.
+5. A confirmation of profile creation is sent back to the user through the primary adaptor.
+
+## Scenarios
+
+### New Borrower Profile Created (201)
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant PrimaryAdaptor as API GW: Create Borrower Profile
+    participant CreateBorrowerProfileUseCase as Create Borrower Profile Use Case
+    participant PutBorrowerProfileSecondaryAdapter as DynamoDB: Put Borrower Profile
+    
+    User->>+PrimaryAdaptor: Submit Borrower Profile Data
+    PrimaryAdaptor->>+CreateBorrowerProfileUseCase: Validate & Forward Data
+    CreateBorrowerProfileUseCase->>+PutBorrowerProfileSecondaryAdapter: Store Borrower Profile Information
+    PutBorrowerProfileSecondaryAdapter-->>-CreateBorrowerProfileUseCase: Confirmation
+    CreateBorrowerProfileUseCase-->>-PrimaryAdaptor: Confirmation
+    PrimaryAdaptor-->>-User: {statusCode: 201, body: {email}}
+```
+
+### Borrower Profile Already Exists (200)
+
+A borrower with the same email address was previously created.   
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant PrimaryAdaptor as API GW: Create Borrower Profile
+    participant CreateBorrowerProfileUseCase as Create Borrower Profile Use Case
+    participant GetBorrowerProfileSecondaryAdapter as DynamoDB: Get Borrower Profile
+
+    User->>+PrimaryAdaptor: Submit Borrower Profile Data
+    PrimaryAdaptor->>+CreateBorrowerProfileUseCase: Validate & Forward Data
+    CreateBorrowerProfileUseCase->>+GetBorrowerProfileSecondaryAdapter: Get Borrower Profile
+    GetBorrowerProfileSecondaryAdapter-->>-CreateBorrowerProfileUseCase: Borrower Profile
+     CreateBorrowerProfileUseCase-->>-PrimaryAdaptor: throws BorrowerProfileAlreadyExistsError
+    PrimaryAdaptor-->>-User: {statusCode: 200, body: {email}}
+```
+   
+
+### Borrower Profile Could Not Be Created (500)
+
+There are various potential causes for this:
+
+- DynamoDB Service Outage
+- Lambda Service Outage
+- Insufficient Permissions (Create Borrower Profile Use Case) 
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant PrimaryAdaptor as API GW: Create Borrower Profile
+    participant CreateBorrowerProfileUseCase as Create Borrower Profile Use Case
+    participant PutBorrowerProfileSecondaryAdapter as DynamoDB: Put Borrower Profile
+    
+    User->>+PrimaryAdaptor: Submit Borrower Profile Data
+    PrimaryAdaptor->>+CreateBorrowerProfileUseCase: Validate & Forward Data
+    CreateBorrowerProfileUseCase->>+GetBorrowerProfileSecondaryAdapter: Get Borrower Profile
+    GetBorrowerProfileSecondaryAdapter-->>-CreateBorrowerProfileUseCase: undefined
+    CreateBorrowerProfileUseCase->>+PutBorrowerProfileSecondaryAdapter: Store Borrower Profile Information
+    PutBorrowerProfileSecondaryAdapter-->>-CreateBorrowerProfileUseCase: throws InternalError
+    CreateBorrowerProfileUseCase-->>-PrimaryAdaptor: throws InternalError
+    PrimaryAdaptor-->>-User: {statusCode: 500, body: {message: 'Internal Server Error'}}
+```
+
+### Borrower Profile Could Not Be Retrieved (500)
+
+There are various potential causes for this:
+
+- DynamoDB Service Outage
+- Lambda Service Outage
+- Insufficient Permissions (Create Borrower Profile Use Case) 
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant PrimaryAdaptor as API GW: Create Borrower Profile
+    participant CreateBorrowerProfileUseCase as Create Borrower Profile Use Case
+    participant PutBorrowerProfileSecondaryAdapter as DynamoDB: Put Borrower Profile
+    
+    User->>+PrimaryAdaptor: Submit Borrower Profile Data
+    PrimaryAdaptor->>+CreateBorrowerProfileUseCase: Validate & Forward Data
+    CreateBorrowerProfileUseCase->>+GetBorrowerProfileSecondaryAdapter: Get Borrower Profile
+    GetBorrowerProfileSecondaryAdapter-->>-CreateBorrowerProfileUseCase: throws InternalError
+    CreateBorrowerProfileUseCase-->>-PrimaryAdaptor: throws InternalError
+    PrimaryAdaptor-->>-User: {statusCode: 500, body: {message: 'Internal Server Error'}}
+```
+import { OutgoingMessage } from "http"

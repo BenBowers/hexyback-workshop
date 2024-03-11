@@ -1,12 +1,10 @@
 import { InternalError } from '@/errors/InternalError';
+import { PutBorrowingCapacityCalculationInput } from '@/ports/secondary/DynamoDBPutBorrowingCapacityCalculation';
 import { DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb';
 import { mockClient } from 'aws-sdk-client-mock';
 import 'aws-sdk-client-mock-jest';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  PutBorrowingCapacityCalculationInput,
-  putBorrowingCapacityCalculation,
-} from './ddb-put-borrowing-capacity-calculation';
+import { putBorrowingCapacityCalculation } from './ddb-put-borrowing-capacity-calculation';
 
 describe('ddb-put-borrowing-capacity-calculation', () => {
   const borrowingCapacityCalculation: PutBorrowingCapacityCalculationInput = {

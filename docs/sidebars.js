@@ -27,29 +27,7 @@ const sidebars = {
       // @ts-ignore
       items: require('./docs/hexy/sidebar.js'),
     },
-    {
-      type: 'category',
-      label: 'Credit Score Service',
-      link: {
-        type: 'generated-index',
-        title: 'Credit Score Service API',
-        slug: '/category/credit-score-service-api',
-      },
-      // @ts-ignore
-      items: require('./docs/credit-score-service-api/sidebar.js'),
-    },
   ],
-
-  // But you can create a sidebar manually
-  /*
-  tutorialSidebar: [
-    {
-      type: 'category',
-      label: 'Tutorial',
-      items: ['hello'],
-    },
-  ],
-   */
 };
 
 module.exports = sidebars;

@@ -1,0 +1,146 @@
+---
+sidebar_position: 7
+tags:
+  - borrowing-capacity
+---
+
+# Borrowing Capacity
+
+![Calculate Borrower's Borrowing Capacity](/img/borrowing-capacity/calculate-borrowers-borrowing-capacity.svg)
+
+## Calculating Borrowing Capacity
+
+1. User requests a borrowing capacity calculation through the client application.
+2. The request hits the primary adaptor: `api-gw-calculate-borrowing-power`.
+3. The primary adaptor passes the request to the `calculate-borrowing-capacity` use case in the domain layer.
+4. The `calculate-borrowing-capacity` use case interacts with the `ddb-get-borrower-profile` secondary adapter to retrieve borrower profile from DynamoDB.
+5. The `calculate-borrowing-capacity` use case calculates the borrowing capacity and uses a secondary adaptor `ddb-put-borrowing-capacity-calculation` to persist the borrowing capacity calculation to DynamoDB.
+6. The estimated borrowing capacity is returned to the user through the primary adaptor.
+
+## `calculate-borrowing-capacity` Use Case
+
+```mermaid
+graph TD
+    A[Start] --> B[Retrieve borrower's profile using email]
+    B --> C{Borrower profile exists?}
+    C -- Yes --> D[Calculate borrower's age]
+    C -- No --> E[Throw BorrowerProfileDoesNotExistError]
+    D --> F[Calculate base borrowing capacity]
+    F --> G[Adjust for employment status]
+    G --> H[Adjust for age]
+    H --> I[Save estimated borrowing capacity calculation]
+    I --> J[Return estimated borrowing capacity]
+    J --> K[End]
+```
+
+### Calculation of Base, Employment Adjusted & Age Adjusted Borrowing Capacity 
+
+```mermaid
+graph TD
+    A[Start] --> B{Input Age, Gross Annual Income, Employment Status}
+    B --> C[Calculate Base Borrowing Capacity - BBC]
+    C -->|Full-time| D[Employment Adjustment: 100% of BBC]
+    C -->|Part-time| E[Employment Adjustment: 90% of BBC]
+    C -->|Casual| F[Employment Adjustment: 80% of BBC]
+    C -->|Self-employed| G[Employment Adjustment: 75% of BBC]
+    D --> H{Age < 25 or Age > 60?}
+    E --> H
+    F --> H
+    G --> H
+    H -->|Yes| I[Age Adjustment: Reduce by 10%]
+    H -->|No| J[No Age Adjustment]
+    I --> K[Return Final Borrowing Capacity]
+    J --> K
+
+```
+
+## Scenarios
+
+### Borrowing Capacity Calculated (200)
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant PrimaryAdaptor as API GW: Calculate Borrowing Capacity
+    participant CalculateBorrowingCapacityUseCase as Calculate Borrowing Capacity Use Case
+    participant GetBorrowerProfileSecondaryAdapter as DynamoDB: Get Borrower Profile
+    participant PutBorrowingCapacityCalculationSecondaryAdaptor as DynamoDB: Put Borrowing Capacity Calculation
+    
+    User->>+PrimaryAdaptor: Request Borrowing Power
+    PrimaryAdaptor->>+CalculateBorrowingCapacityUseCase: Validate & Forward Request
+    CalculateBorrowingCapacityUseCase->>+GetBorrowerProfileSecondaryAdapter: Get Borrower Profile 
+    GetBorrowerProfileSecondaryAdapter-->>-CalculateBorrowingCapacityUseCase: Borrower Profile
+    CalculateBorrowingCapacityUseCase-->>CalculateBorrowingCapacityUseCase: Calculate Borrowing Capacity
+    CalculateBorrowingCapacityUseCase->>+PutBorrowingCapacityCalculationSecondaryAdaptor: Put Borrowing Capacity Calculation 
+    PutBorrowingCapacityCalculationSecondaryAdaptor-->>-CalculateBorrowingCapacityUseCase: Borrowing Capacity Calculation
+    CalculateBorrowingCapacityUseCase-->>-PrimaryAdaptor: Calculated Borrowing Capacity 
+    PrimaryAdaptor-->>-User: {statusCode: 200, body: {estimatedBorrowingCapacity} }
+```
+
+### Borrowing Capacity Calculation Could Not Be Created (500)
+
+There are various potential causes for this:
+
+- DynamoDB Service Outage
+- Lambda Service Outage
+- Insufficient Permissions (Calculate Borrowing Capacity Use Case) 
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant PrimaryAdaptor as API GW: Calculate Borrowing Capacity
+    participant CalculateBorrowingCapacityUseCase as Calculate Borrowing Capacity Use Case
+    participant GetBorrowerProfileSecondaryAdapter as DynamoDB: Get Borrower Profile
+    participant PutBorrowingCapacityCalculationSecondaryAdaptor as DynamoDB: Put Borrowing Capacity Calculation
+    
+    User->>+PrimaryAdaptor: Request Borrowing Power
+    PrimaryAdaptor->>+CalculateBorrowingCapacityUseCase: Validate & Forward Request
+    CalculateBorrowingCapacityUseCase->>+GetBorrowerProfileSecondaryAdapter: Get Borrower Profile 
+    GetBorrowerProfileSecondaryAdapter-->>-CalculateBorrowingCapacityUseCase: Borrower Profile
+    CalculateBorrowingCapacityUseCase-->>CalculateBorrowingCapacityUseCase: Calculate Borrowing Capacity
+    CalculateBorrowingCapacityUseCase->>+PutBorrowingCapacityCalculationSecondaryAdaptor: Put Borrowing Capacity Calculation 
+    PutBorrowingCapacityCalculationSecondaryAdaptor-->>-CalculateBorrowingCapacityUseCase: throws InternalError
+    CalculateBorrowingCapacityUseCase-->>-PrimaryAdaptor: throws InternalServerError
+    PrimaryAdaptor-->>-User: {statusCode: 500, message: "Internal Server Error"}
+```
+### Borrower Profile Could Not Be Retrieved (500)
+
+There are various potential causes for this:
+
+- DynamoDB Service Outage
+- Lambda Service Outage
+- Insufficient Permissions (Calculate Borrowing Capacity Use Case) 
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant PrimaryAdaptor as API GW: Calculate Borrowing Capacity
+    participant CalculateBorrowingCapacityUseCase as Calculate Borrowing Capacity Use Case
+    participant GetBorrowerProfileSecondaryAdapter as DynamoDB: Get Borrower Profile
+    participant PutBorrowingCapacityCalculationSecondaryAdaptor as DynamoDB: Put Borrowing Capacity Calculation
+    
+    User->>+PrimaryAdaptor: Request Borrowing Power
+    PrimaryAdaptor->>+CalculateBorrowingCapacityUseCase: Validate & Forward Request
+    CalculateBorrowingCapacityUseCase->>+GetBorrowerProfileSecondaryAdapter: Get Borrower Profile 
+    GetBorrowerProfileSecondaryAdapter-->>-CalculateBorrowingCapacityUseCase: throws InternalError
+    CalculateBorrowingCapacityUseCase-->>-PrimaryAdaptor: throws InternalError
+    PrimaryAdaptor-->>-User: {statusCode: 500, message: "Internal Server Error"}
+```
+
+### Borrower Does Not Exist (400)
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant PrimaryAdaptor as API GW: Calculate Borrowing Capacity
+    participant CalculateBorrowingCapacityUseCase as Calculate Borrowing Capacity Use Case
+    participant GetBorrowerProfileSecondaryAdapter as DynamoDB: Get Borrower Profile
+    participant PutBorrowingCapacityCalculationSecondaryAdaptor as DynamoDB: Put Borrowing Capacity Calculation
+    
+    User->>+PrimaryAdaptor: Request Borrowing Power
+    PrimaryAdaptor->>+CalculateBorrowingCapacityUseCase: Validate & Forward Request
+    CalculateBorrowingCapacityUseCase->>+GetBorrowerProfileSecondaryAdapter: Get Borrower Profile 
+    GetBorrowerProfileSecondaryAdapter-->>-CalculateBorrowingCapacityUseCase: throws BorrowerProfileDoesNotExistError
+    CalculateBorrowingCapacityUseCase-->>-PrimaryAdaptor: throws InternalServerError
+    PrimaryAdaptor-->>-User: {statusCode: 400, message: 'Borrower with the provided email does not exist'}
+```
