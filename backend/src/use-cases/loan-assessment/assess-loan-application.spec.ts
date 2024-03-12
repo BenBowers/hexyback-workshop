@@ -21,8 +21,8 @@ describe('Loan Application Evaluation', () => {
       monthlyExpenses: 1500,
       creditScore: 650,
     };
-    expect(assessLoanApplication(youngApplicant)).resolves.toEqual('REJECTED');
-    expect(assessLoanApplication(oldApplicant)).resolves.toEqual('REJECTED');
+    expect(assessLoanApplication(youngApplicant)).toEqual('REJECTED');
+    expect(assessLoanApplication(oldApplicant)).toEqual('REJECTED');
   });
 
   // Test for poor credit score
@@ -34,7 +34,7 @@ describe('Loan Application Evaluation', () => {
       monthlyExpenses: 2000,
       creditScore: 250,
     };
-    expect(assessLoanApplication(applicant)).resolves.toEqual('REJECTED');
+    expect(assessLoanApplication(applicant)).toEqual('REJECTED');
   });
 
   // Test for low credit but varying DTI
@@ -46,7 +46,7 @@ describe('Loan Application Evaluation', () => {
       monthlyExpenses: 1500,
       creditScore: 400,
     };
-    expect(assessLoanApplication(applicant)).resolves.toEqual('APPROVED');
+    expect(assessLoanApplication(applicant)).toEqual('APPROVED');
   });
 
   it('should review low credit, medium DTI', () => {
@@ -57,7 +57,7 @@ describe('Loan Application Evaluation', () => {
       monthlyExpenses: 2500,
       creditScore: 400,
     };
-    expect(assessLoanApplication(applicant)).resolves.toEqual('REVIEW');
+    expect(assessLoanApplication(applicant)).toEqual('REVIEW');
   });
 
   it('should reject low credit, high DTI', () => {
@@ -68,7 +68,7 @@ describe('Loan Application Evaluation', () => {
       monthlyExpenses: 35000,
       creditScore: 400,
     };
-    expect(assessLoanApplication(applicant)).resolves.toEqual('REJECTED');
+    expect(assessLoanApplication(applicant)).toEqual('REJECTED');
   });
 
   type DtiBoundary = 'low' | 'medium' | 'high';
@@ -164,9 +164,7 @@ describe('Loan Application Evaluation', () => {
           monthlyExpenses: dtiBoundaryToMonthlyExpenses[dtiBoundary],
           creditScore: creditScore,
         };
-        expect(assessLoanApplication(applicant)).resolves.toEqual(
-          result.toUpperCase()
-        );
+        expect(assessLoanApplication(applicant)).toEqual(result.toUpperCase());
       });
     }
   );
