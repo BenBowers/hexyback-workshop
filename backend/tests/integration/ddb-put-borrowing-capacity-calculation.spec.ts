@@ -10,7 +10,7 @@ import {
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { randomUUID } from 'crypto';
 import { Config } from 'sst/node/config';
-import { afterAll, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 describe('ddb-put-borrowing-capacity-calculation', () => {
   const financialDataTableName = Config.FINANCIAL_DATA_TABLE_NAME;
   const client = new DynamoDBClient({});
@@ -68,7 +68,7 @@ describe('ddb-put-borrowing-capacity-calculation', () => {
     grossAnnualIncome: 100000,
     timestamp: new Date().toISOString(),
   };
-  afterAll(async () => {
+  afterEach(async () => {
     await deleteBorrowingCapacityCalculation(
       borrowingCapacityCalculation.borrowerEmail,
       borrowingCapacityCalculation.borrowingCapacityCalculationId
