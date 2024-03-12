@@ -1,6 +1,10 @@
 import { InternalError } from '@/errors/InternalError';
 import { PutLoanApplicationInput } from '@/ports/secondary/DynamoDBPutLoanApplication';
-import { DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb';
+import {
+  DynamoDBClient,
+  DynamoDBServiceException,
+  PutItemCommand,
+} from '@aws-sdk/client-dynamodb';
 import { mockClient } from 'aws-sdk-client-mock';
 import 'aws-sdk-client-mock-jest';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -30,7 +34,14 @@ describe('ddb-put-loan-application', () => {
   };
 
   it('throws an InternalError when the dynamodb client rejects for any reason', async () => {
-    dynamoDbMock.rejects(new Error('Cheers Kent'));
+    dynamoDbMock.rejects(
+      new DynamoDBServiceException({
+        message: 'something went wrong',
+        $metadata: {},
+        name: 'ServiceException',
+        $fault: 'client',
+      })
+    );
     await expect(putLoanApplication(loanApplication)).rejects.toBeInstanceOf(
       InternalError
     );
