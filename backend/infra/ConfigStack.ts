@@ -44,6 +44,8 @@ export function ConfigStack({ stack, app }: StackContext) {
   const applyForLoanHandler = new Function(stack, 'applyForLoanHandlerLambda', {
     handler: 'src/adaptors/primary/api-gw-apply-for-loan.handler',
     functionName: app.logicalPrefixedName('ApplyForLoan'),
+    bind: [FINANCIAL_DATA_TABLE_NAME],
+    permissions: [[financialDataTable.cdk.table, 'grantReadWriteData']],
   });
 
   const createBorrowerProfileHandler = new Function(

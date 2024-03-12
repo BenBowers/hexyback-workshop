@@ -1,5 +1,6 @@
+import { BorrowerProfileDoesNotExistError } from '@/errors/BorrowerProfileDoesNotExistError';
 import { ApplyForLoanResponse, LoanApplication } from '@/types/api';
-import { assessLoanApplication } from '@/use-cases/loan-assessment/assess-loan-application';
+import { processLoanApplication } from '@/use-cases/loan-assessment/process-loan-application';
 import { Logger, injectLambdaContext } from '@aws-lambda-powertools/logger';
 import { Tracer, captureLambdaHandler } from '@aws-lambda-powertools/tracer';
 import middy from '@middy/core';
@@ -18,22 +19,41 @@ const logger = new Logger();
 export const lambdaHandler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent
 ) => {
-  const { grossAnnualIncome, employmentStatus, monthlyExpenses } = JSON.parse(
-    event.body!
-  ) as LoanApplication;
-  const loanApplicationStatus = await assessLoanApplication({
-    age: 20,
-    creditScore: 500,
-    grossAnnualIncome: grossAnnualIncome,
-    employmentStatus,
-    monthlyExpenses,
-  });
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      loanApplicationStatus,
-    } as ApplyForLoanResponse),
-  };
+  try {
+    const {
+      grossAnnualIncome,
+      employmentStatus,
+      monthlyExpenses,
+      borrowerEmail,
+    } = JSON.parse(event.body!) as LoanApplication;
+    const loanApplicationStatus = await processLoanApplication({
+      grossAnnualIncome,
+      employmentStatus,
+      monthlyExpenses,
+      borrowerEmail,
+    });
+    return {
+      statusCode: 201,
+      body: JSON.stringify({
+        loanApplicationStatus,
+      } as ApplyForLoanResponse),
+    };
+  } catch (e) {
+    if (e instanceof BorrowerProfileDoesNotExistError) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          message: 'Borrower with the provided email does not exist',
+        }),
+      };
+    }
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        message: 'Internal Server Error',
+      }),
+    };
+  }
 };
 
 export const handler = middy(lambdaHandler)

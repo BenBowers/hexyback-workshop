@@ -94,7 +94,7 @@ describe.concurrent('api-aw-calculate-borrowing-power', () => {
   it('responds with a 400 Bad request if the borrower provides an email where no borrower exists with email', async ({
     expect,
   }) => {
-    const borrowerEmail = `borrowing-capacity+${randomUUID}@example.com`;
+    const borrowerEmail = `borrowing-capacity+${randomUUID()}@example.com`;
     await expect(
       apiClient.GET('/borrowingCapacity', {
         params: {
@@ -123,7 +123,7 @@ describe.concurrent('api-aw-calculate-borrowing-power', () => {
   it('responds with a 200 Complete given the borrower provides the required query params when the borrower exists', async ({
     expect,
   }) => {
-    const borrowerEmail = `borrowing-capacity+${randomUUID}@example.com`;
+    const borrowerEmail = `borrowing-capacity+${randomUUID()}@example.com`;
     await apiClient.POST('/borrower', {
       body: {
         email: borrowerEmail,

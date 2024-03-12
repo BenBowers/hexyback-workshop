@@ -1,11 +1,69 @@
 import { ApplyForLoanRequestBody } from '@/types/api';
+import {
+  DeleteItemCommand,
+  DynamoDBClient,
+  QueryCommand,
+} from '@aws-sdk/client-dynamodb';
+import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { paths } from '@openapi';
+import { randomUUID } from 'crypto';
 import openApiFetch from 'openapi-fetch';
 import { Config } from 'sst/node/config';
 import { describe, it } from 'vitest';
 const baseUrl = Config.API_ENDPOINT;
 
-describe.skip('api-aw-apply-for-loan', () => {
+const dynamodbClient = new DynamoDBClient({});
+const financialDataTableName = Config.FINANCIAL_DATA_TABLE_NAME;
+const deleteBorrowerProfile = (email: string) =>
+  dynamodbClient.send(
+    new DeleteItemCommand({
+      TableName: financialDataTableName,
+      Key: marshall({ pk: email, sk: 'BORROWER' }),
+    })
+  );
+
+const getLoanApplications = (email: string) =>
+  dynamodbClient
+    .send(
+      new QueryCommand({
+        TableName: financialDataTableName,
+        KeyConditions: {
+          pk: {
+            ComparisonOperator: 'EQ',
+            AttributeValueList: [{ S: email }],
+          },
+          sk: {
+            ComparisonOperator: 'BEGINS_WITH',
+            AttributeValueList: [{ S: 'LOAN_APPLICATION#' }],
+          },
+        },
+      })
+    )
+    .then(({ Items }) =>
+      Items?.length ? Items.map((item) => unmarshall(item)) : undefined
+    );
+const deleteLoanApplications = (email: string) =>
+  getLoanApplications(email).then(async (loanApplications) => {
+    if (loanApplications) {
+      await Promise.all(
+        loanApplications.map(async (borrowingCapacityCalculation) => {
+          await dynamodbClient.send(
+            new DeleteItemCommand({
+              TableName: financialDataTableName,
+              Key: marshall({
+                pk: email,
+                sk:
+                  `LOAN_APPLICATION#${borrowingCapacityCalculation.borrowingCapacityCalculationId}` +
+                  `#TIMESTAMP#${borrowingCapacityCalculation.timestamp}`,
+              }),
+            })
+          );
+        })
+      );
+    }
+  });
+
+describe.concurrent('api-aw-apply-for-loan', () => {
   const apiClient = openApiFetch<paths>({
     baseUrl: baseUrl,
   });
@@ -26,25 +84,68 @@ describe.skip('api-aw-apply-for-loan', () => {
       }),
     });
   });
-  it('responds with a 200 Complete given the user provides the required request body', async ({
+  it('response with a 400 Bad Request given the user provides the required request body but the borrower profile does not exist', async ({
     expect,
   }) => {
-    //  await expect(
-    // apiClient.POST('/loan', {
-    // body: {
-    // monthlyExpenses: 500,
-    // employmentStatus: 'FULL_TIME',
-    // borrowerEmail:
-    // },
-    // })
-    // ).resolves.toEqual({
-    // data: {
-    // loanApplicationStatus: 'APPROVED',
-    // },
-    // response: expect.objectContaining({
-    // status: 200,
-    // statusText: 'OK',
-    // }),
-    // });
+    const borrowerEmail = `loan-application+${randomUUID()}@example.com`;
+    await expect(
+      apiClient.POST('/loan', {
+        body: {
+          borrowerEmail: borrowerEmail,
+          grossAnnualIncome: 100_000,
+          employmentStatus: 'FULL_TIME',
+          monthlyExpenses: 1000,
+        },
+      })
+    ).resolves.toEqual({
+      error: {
+        message: 'Borrower with the provided email does not exist',
+      },
+      response: expect.objectContaining({
+        status: 400,
+        statusText: 'Bad Request',
+      }),
+    });
+
+    await Promise.all([
+      deleteBorrowerProfile(borrowerEmail),
+      deleteLoanApplications(borrowerEmail),
+    ]);
+  });
+  it('responds with a 201 Submitted with the loan application status given the user provides the required request body when the borrower profile exists', async ({
+    expect,
+  }) => {
+    const borrowerEmail = `loan-application+${randomUUID()}@example.com`;
+    await apiClient.POST('/borrower', {
+      body: {
+        email: borrowerEmail,
+        name: 'John Doe',
+        creditScore: 800,
+        dob: '1999-01-01',
+      },
+    });
+    await expect(
+      apiClient.POST('/loan', {
+        body: {
+          borrowerEmail: borrowerEmail,
+          grossAnnualIncome: 100_000,
+          employmentStatus: 'FULL_TIME',
+          monthlyExpenses: 1000,
+        },
+      })
+    ).resolves.toEqual({
+      data: {
+        loanApplicationStatus: 'APPROVED',
+      },
+      response: expect.objectContaining({
+        status: 201,
+        statusText: 'Created',
+      }),
+    });
+
+    await Promise.all([
+      deleteBorrowerProfile(borrowerEmail),
+      deleteLoanApplications(borrowerEmail),
+    ]);
   });
 });

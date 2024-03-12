@@ -115,10 +115,10 @@ describe('process loan-application', () => {
         });
       });
       describe('given the write to the database succeeds', () => {
-        it('resolves to undefined', () => {
+        it('resolves with the loan application status', () => {
           return expect(
             processLoanApplication(processLoanApplicationInput)
-          ).resolves.toBeUndefined();
+          ).resolves.toEqual('APPROVED');
         });
       });
       describe('given the write to the database rejects', () => {
