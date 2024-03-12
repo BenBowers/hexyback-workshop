@@ -7,7 +7,7 @@ export type BorrowingCapacityResponse =
 export type ApplyForLoanRequestBody =
   paths['/loan']['post']['requestBody']['content']['application/json'];
 export type ApplyForLoanResponse =
-  paths['/loan']['post']['responses']['200']['content']['application/json'];
+  paths['/loan']['post']['responses']['201']['content']['application/json'];
 export type BorrowerProfile = components['schemas']['Borrower'];
 export type CalculateBaseBorrowingCapacityInput =
   paths['/borrowingCapacity']['get']['parameters']['query'];

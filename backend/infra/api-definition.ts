@@ -269,8 +269,8 @@ export const generateApiSpec = ({
         },
         description: 'Assesses a borrowers loan application',
         responses: {
-          '200': {
-            description: 'OK',
+          '201': {
+            description: 'Loan application created',
             content: {
               'application/json': {
                 schema: {
