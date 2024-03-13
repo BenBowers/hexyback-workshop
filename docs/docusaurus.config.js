@@ -11,7 +11,7 @@ const config = {
   },
   title: "I'm bringing Hexy Back",
   tagline: "Those other frameworks don't know how to act",
-  url: 'https://journeyone.com.au',
+  url: 'https://benbowers.github.io',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -19,8 +19,9 @@ const config = {
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  // organizationName: 'journeyone', // Usually your GitHub org/user name.
-  // projectName: 'hexy-back-workshop', // Usually your repo name.
+  organizationName: 'BenBowers', // Usually your GitHub org/user name.
+  projectName: 'hexy-back-workshop', // Usually your repo name.
+  trailingSlash: false,
 
   presets: [
     [
