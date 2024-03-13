@@ -151,7 +151,7 @@ sequenceDiagram
     User->>+PrimaryAdaptor: Request Borrowing Power
     PrimaryAdaptor->>+CalculateBorrowingCapacityUseCase: Validate & Forward Request
     CalculateBorrowingCapacityUseCase->>+GetBorrowerProfileSecondaryAdapter: Get Borrower Profile 
-    GetBorrowerProfileSecondaryAdapter-->>-CalculateBorrowingCapacityUseCase: throws BorrowerProfileDoesNotExistError
-    CalculateBorrowingCapacityUseCase-->>-PrimaryAdaptor: throws InternalServerError
+    GetBorrowerProfileSecondaryAdapter-->>-CalculateBorrowingCapacityUseCase: undefined
+    CalculateBorrowingCapacityUseCase-->>-PrimaryAdaptor: throws BorrowerDoesNotExistError
     PrimaryAdaptor-->>-User: {statusCode: 400, message: 'Borrower with the provided email does not exist'}
 ```

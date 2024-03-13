@@ -29,13 +29,13 @@ describe('borrowing-capacity', () => {
     putBorrowingCapacityCalculation
   );
   const calculateBorrowingCapacityInput: CalculateBorrowingCapacityInput = {
-    borrowerEmail: 'john.doe@example',
+    borrowerEmail: 'john.doe@example.com',
     grossAnnualIncome: 60_000,
     employmentStatus: 'FULL_TIME',
   };
   const borrowerProfile: BorrowerProfile = {
     dob: '1981-11-02',
-    email: 'john.doe@example',
+    email: 'john.doe@example.com',
     name: 'John Doe',
     creditScore: 500,
   };

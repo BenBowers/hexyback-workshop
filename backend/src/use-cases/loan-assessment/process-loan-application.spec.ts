@@ -24,7 +24,7 @@ describe('process loan-application', () => {
 
   const borrowerProfile: BorrowerProfile = {
     dob: '1981-11-02',
-    email: 'john.doe@example',
+    email: 'john.doe@example.com',
     name: 'John Doe',
     creditScore: 500,
   };
@@ -39,7 +39,7 @@ describe('process loan-application', () => {
   const assessLoanApplicationSpy = vi.mocked(assessLoanApplication);
 
   const processLoanApplicationInput: ProcessLoanApplicationInput = {
-    borrowerEmail: 'john.doe@example',
+    borrowerEmail: 'john.doe@example.com',
     employmentStatus: 'FULL_TIME',
     grossAnnualIncome: 100000,
     monthlyExpenses: 5000,

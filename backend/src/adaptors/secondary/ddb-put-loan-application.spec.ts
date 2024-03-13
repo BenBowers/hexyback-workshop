@@ -23,7 +23,7 @@ describe('ddb-put-loan-application', () => {
   });
 
   const loanApplication: PutLoanApplicationInput = {
-    borrowerEmail: 'john.doe@example',
+    borrowerEmail: 'john.doe@example.com',
     creditScore: 700,
     employmentStatus: 'FULL_TIME',
     grossAnnualIncome: 100000,
@@ -55,7 +55,7 @@ describe('ddb-put-loan-application', () => {
       expect(dynamoDbMock).toHaveReceivedCommandWith(PutItemCommand, {
         TableName: 'financial-data-table',
         Item: {
-          pk: { S: 'john.doe@example' },
+          pk: { S: 'john.doe@example.com' },
           sk: {
             S:
               `LOAN_APPLICATION#${loanApplication.loanApplicationId}` +
