@@ -12,7 +12,7 @@ const config = {
   title: "I'm bringing Hexy Back",
   tagline: "Those other frameworks don't know how to act",
   url: 'https://benbowers.github.io',
-  baseUrl: '/',
+  baseUrl: '/hexyback-workshop/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
