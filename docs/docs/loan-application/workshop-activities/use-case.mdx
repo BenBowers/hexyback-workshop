@@ -486,17 +486,6 @@ describe('process loan-application', () => {
      describe('given the borrower profile is successfully retrieved', () => {
        // highlight-next-line
        it('writes the loan application to the database', async () => {
-        await processLoanApplication(processLoanApplicationInput);
-        expect(putLoanApplicationSpy).toHaveBeenCalledWith({
-          loanApplicationId: expect.any(String),
-          borrowerEmail: processLoanApplicationInput.borrowerEmail,
-          creditScore: borrowerProfile.creditScore,
-          employmentStatus: processLoanApplicationInput.employmentStatus,
-          grossAnnualIncome: processLoanApplicationInput.grossAnnualIncome,
-          loanApplicationStatus: 'APPROVED',
-          monthlyExpenses: processLoanApplicationInput.monthlyExpenses,
-          timestamp: mockedTimestamp,
-        });
       });
       // ...
      });

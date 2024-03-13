@@ -17,7 +17,7 @@ describe('create-borrower-profile', () => {
   const borrowerProfile: BorrowerProfile = {
     creditScore: 500,
     dob: '1981-11-02',
-    email: 'john.doe@example',
+    email: 'john.doe@example.com',
     name: 'John Doe',
   };
   describe('given a borrower profile', () => {

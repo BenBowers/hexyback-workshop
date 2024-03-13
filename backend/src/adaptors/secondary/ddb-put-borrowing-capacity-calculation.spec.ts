@@ -10,7 +10,7 @@ describe('ddb-put-borrowing-capacity-calculation', () => {
   const borrowingCapacityCalculation: PutBorrowingCapacityCalculationInput = {
     estimatedBorrowingCapacity: 300_000,
     timestamp: '2024-03-15T00:00:00.000Z',
-    borrowerEmail: 'john.doe@example',
+    borrowerEmail: 'john.doe@example.com',
     borrowingCapacityCalculationId: 'd5fe6ff5-20b3-4581-b38f-9b034c20d783',
     employmentStatus: 'FULL_TIME',
     grossAnnualIncome: 60_000,
@@ -41,7 +41,7 @@ describe('ddb-put-borrowing-capacity-calculation', () => {
       expect(dynamoDbMock).toHaveReceivedCommandWith(PutItemCommand, {
         TableName: 'financial-data-table',
         Item: {
-          pk: { S: 'john.doe@example' },
+          pk: { S: 'john.doe@example.com' },
           sk: {
             S:
               `BORROWING_CAPACITY_CALCULATION#${borrowingCapacityCalculation.borrowingCapacityCalculationId}` +

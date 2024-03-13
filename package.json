@@ -4,7 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "docs": "turbo @hexy/docs#start"
+    "docs": "turbo @hexy/docs#start",
+    "remove": "turbo @hexy/backend#remove",
+    "test": "turbo @hexy/backend#test",
+    "test:integration": "turbo @hexy/backend#test:integration"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.2",

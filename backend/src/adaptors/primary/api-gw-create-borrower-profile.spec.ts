@@ -19,7 +19,7 @@ describe('api-gw-create-borrower-profile', () => {
   const borrowerProfile: BorrowerProfile = {
     creditScore: 500,
     dob: '1981-11-02',
-    email: 'john.doe@example',
+    email: 'john.doe@example.com',
     name: 'John Doe',
   };
   const context = {} as Context;
