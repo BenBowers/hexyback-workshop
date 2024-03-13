@@ -47,6 +47,7 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      image: 'img/hexy-back.png',
       docs: {
         sidebar: {
           hideable: true,
