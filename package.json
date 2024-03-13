@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "scripts": {},
+  "scripts": {
+    "docs": "turbo @hexy/docs#start"
+  },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.2",
     "@types/aws-lambda": "^8.10.134",
