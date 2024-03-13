@@ -4,20 +4,16 @@ import {
   BorrowingCapacityResponse,
 } from '@/types/api';
 import { calculateBorrowingCapacity } from '@/use-cases/borrowing-capacity/calculate-borrowing-capacity';
-import { Logger, injectLambdaContext } from '@aws-lambda-powertools/logger';
-import { Tracer, captureLambdaHandler } from '@aws-lambda-powertools/tracer';
+import { getLogger, getTracer } from '@/utils/telemetry';
+import { injectLambdaContext } from '@aws-lambda-powertools/logger';
+import { captureLambdaHandler } from '@aws-lambda-powertools/tracer';
 import middy from '@middy/core';
 import { APIGatewayProxyEvent, APIGatewayProxyHandler } from 'aws-lambda';
 
 const serviceName = 'GetBorrowingPower';
 
-const tracer = new Tracer({
-  serviceName,
-  captureHTTPsRequests: true,
-  enabled: true,
-});
-
-const logger = new Logger();
+const tracer = getTracer(serviceName);
+const logger = getLogger(serviceName);
 
 export const lambdaHandler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent

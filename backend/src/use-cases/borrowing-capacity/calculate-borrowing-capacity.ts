@@ -4,6 +4,7 @@ import { BorrowerProfileDoesNotExistError } from '@/errors/BorrowerProfileDoesNo
 import { CalculateBorrowingCapacityPort } from '@/ports/primary/CalculateBorrowingCapacity';
 import { EmploymentStatus } from '@/types/api';
 import { getYearsSinceCurrentDate } from '@/utils/get-years-since-current-date';
+import { Log } from '@/utils/telemetry';
 import { randomUUID } from 'node:crypto';
 import { adjustForAge } from './adjust-for-age';
 import { adjustForEmploymentStatus } from './adjust-for-employment-status';
@@ -37,9 +38,11 @@ export const calculateBorrowingCapacity: CalculateBorrowingCapacityPort =
     );
     const borrowerNotFound = !borrowerProfile;
     if (borrowerNotFound) {
+      Log.info('Borrower Not Found');
       throw new BorrowerProfileDoesNotExistError('Borrower profile not found');
     }
 
+    Log.info('Borrower Found');
     const age = calculateAge(new Date(borrowerProfile.dob));
     const estimatedBorrowingCapacity = calculateEstimatedBorrowingCapacity(
       age,
