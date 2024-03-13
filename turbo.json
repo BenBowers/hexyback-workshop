@@ -18,6 +18,9 @@
       "cache": false,
       "dependsOn": ["@hexy/docs#gen-api-docs-all"]
     },
+    "@hexy/docs#build": {
+      "dependsOn": ["@hexy/docs#gen-api-docs-all"]
+    },
     "@hexy/backend#test": {
       "cache": false
     },
