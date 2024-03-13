@@ -49,6 +49,10 @@
         "test-ci"
       ]
     },
-    "build": {}
+    "@hexy/docs#build": {
+      "dependsOn": [
+        "@hexy/docs#gen-api-docs-all"
+      ]
+    }
   }
 }
