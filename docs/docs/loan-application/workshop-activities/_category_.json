@@ -1,0 +1,9 @@
+{
+  "label": "Workshop Activities",
+  "collapsible": true,
+  "collapsed": false,
+  "link": {
+    "type": "generated-index",
+    "title": "Workshop Activities"
+  }
+}

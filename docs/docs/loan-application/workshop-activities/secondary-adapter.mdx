@@ -1,0 +1,364 @@
+---
+sidebar_position: 2
+tags:
+  - secondary-adapter
+---
+
+# Secondary Adapter
+
+## Secondary Adapter
+
+### Examine the `DynamoDBPutLoanApplication` secondary port
+
+```typescript title="backend/src/ports/secondary/DynamoDBPutLoanApplication.ts"
+import { EmploymentStatus } from '@/entities/EmploymentStatus';
+import { LoanApplicationStatus } from '@/entities/LoanApplicationStatus';
+
+export type PutLoanApplicationInput = {
+  loanApplicationId: string;
+  borrowerEmail: string;
+  timestamp: string;
+  creditScore: number;
+  grossAnnualIncome: number;
+  monthlyExpenses: number;
+  loanApplicationStatus: LoanApplicationStatus;
+  employmentStatus: EmploymentStatus;
+};
+export type PutLoanApplicationPort = (
+  loanApplication: PutLoanApplicationInput
+) => Promise<void>;
+```
+
+### Integration testing of the `DynamoDBPutLoanApplication` secondary port
+
+```typescript title="backend/tests/integration/ddb-put-loan-application.spec.ts"
+import { putLoanApplication } from '@/adaptors/secondary/ddb-put-loan-application';
+import { PutLoanApplicationInput } from '@/ports/secondary/DynamoDBPutLoanApplication';
+import {
+  DeleteItemCommand,
+  DynamoDBClient,
+  QueryCommand,
+} from '@aws-sdk/client-dynamodb';
+import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
+import { randomUUID } from 'crypto';
+import { Config } from 'sst/node/config';
+import { afterEach, describe, expect, it } from 'vitest';
+
+describe('ddb-put-loan-application', () => {
+  const financialDataTableName = Config.FINANCIAL_DATA_TABLE_NAME;
+  const client = new DynamoDBClient({});
+  // ...
+  const loanApplication: PutLoanApplicationInput = {
+    borrowerEmail: `loan-application-ddb+${randomUUID()}@example.com`,
+    loanApplicationId: randomUUID(),
+    timestamp: new Date().toISOString(),
+    creditScore: 700,
+    grossAnnualIncome: 100000,
+    monthlyExpenses: 5000,
+    loanApplicationStatus: 'APPROVED',
+    employmentStatus: 'FULL_TIME',
+  };
+  // Cleans up the DynamoDB Table after each test case
+  afterEach(async () => {
+    await deleteLoanApplication(
+      loanApplication.borrowerEmail,
+      loanApplication.loanApplicationId
+    );
+  });
+  it(
+    'writes a loan application record with ' +
+      'PK of email and SK of LOAN_APPLICATION#loanApplicationId#TIMESTAMP#timestamp ' +
+      'given a valid loan application',
+    async () => {
+      // **Hint** Take a look at the following integration test:
+      // backend/tests/integration/ddb-put-borrowing-capacity-calculation.spec.ts
+    }
+  );
+});
+```
+
+<details>
+  <summary>Solution</summary>
+
+```typescript title="backend/tests/integration/ddb-put-loan-application.spec.ts"
+import { putLoanApplication } from '@/adaptors/secondary/ddb-put-loan-application';
+import { PutLoanApplicationInput } from '@/ports/secondary/DynamoDBPutLoanApplication';
+import {
+  DeleteItemCommand,
+  DynamoDBClient,
+  QueryCommand,
+} from '@aws-sdk/client-dynamodb';
+import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
+import { randomUUID } from 'crypto';
+import { Config } from 'sst/node/config';
+import { afterEach, describe, expect, it } from 'vitest';
+
+describe('ddb-put-loan-application', () => {
+  const financialDataTableName = Config.FINANCIAL_DATA_TABLE_NAME;
+  const client = new DynamoDBClient({});
+  const getLoanApplication = (email: string, loanApplicationId: string) =>
+    client
+      .send(
+        new QueryCommand({
+          TableName: financialDataTableName,
+          KeyConditions: {
+            pk: {
+              ComparisonOperator: 'EQ',
+              AttributeValueList: [{ S: email }],
+            },
+            sk: {
+              ComparisonOperator: 'BEGINS_WITH',
+              AttributeValueList: [
+                {
+                  S: `LOAN_APPLICATION#${loanApplicationId}`,
+                },
+              ],
+            },
+          },
+        })
+      )
+      .then(({ Items }) => (Items?.length ? unmarshall(Items[0]!) : undefined));
+  const deleteLoanApplication = (email: string, loanApplicationId: string) =>
+    getLoanApplication(email, loanApplicationId).then(
+      async (loanApplication) => {
+        if (loanApplication) {
+          await client.send(
+            new DeleteItemCommand({
+              TableName: financialDataTableName,
+              Key: marshall({
+                pk: email,
+                sk:
+                  `LOAN_APPLICATION#${loanApplicationId}` +
+                  `#TIMESTAMP#${loanApplication.timestamp}`,
+              }),
+            })
+          );
+        }
+      }
+    );
+  const loanApplication: PutLoanApplicationInput = {
+    borrowerEmail: `loan-application-ddb+${randomUUID()}@example.com`,
+    loanApplicationId: randomUUID(),
+    timestamp: new Date().toISOString(),
+    creditScore: 700,
+    grossAnnualIncome: 100000,
+    monthlyExpenses: 5000,
+    loanApplicationStatus: 'APPROVED',
+    employmentStatus: 'FULL_TIME',
+  };
+  afterEach(async () => {
+    await deleteLoanApplication(
+      loanApplication.borrowerEmail,
+      loanApplication.loanApplicationId
+    );
+  });
+  it(
+    'writes a loan application record with ' +
+      'PK of email and SK of LOAN_APPLICATION#loanApplicationId#TIMESTAMP#timestamp ' +
+      'given a valid loan application',
+    async () => {
+      await putLoanApplication(loanApplication);
+      await expect(
+        getLoanApplication(
+          loanApplication.borrowerEmail,
+          loanApplication.loanApplicationId
+        )
+      ).resolves.toMatchObject({
+        pk: loanApplication.borrowerEmail,
+        sk:
+          `LOAN_APPLICATION#${loanApplication.loanApplicationId}` +
+          `#TIMESTAMP#${loanApplication.timestamp}`,
+        loanApplicationId: loanApplication.loanApplicationId,
+        timestamp: loanApplication.timestamp,
+        creditScore: loanApplication.creditScore,
+        grossAnnualIncome: loanApplication.grossAnnualIncome,
+        monthlyExpenses: loanApplication.monthlyExpenses,
+        loanApplicationStatus: loanApplication.loanApplicationStatus,
+      });
+    }
+  );
+});
+```
+</details>
+
+### Start the test watcher
+
+Run the following command:
+
+```shell
+pnpm run test
+```
+
+You should see a failing test case, similar to the following:
+
+![Failing `Apply for Loan` integration test](/img/loan-application/failing-apply-for-loan-integration-test.png)
+
+### Make the failing integration test pass
+
+Navigate to `backend/src/adaptors/secondary/ddb-put-loan-application.ts`.
+
+You'll need to issue a DynamoDB `PutItemCommand` to persist the `LoanApplication` entity.
+
+>Note: The `LoanApplication` entity has a `pk` consisting of the borrower's email. The `sk` is formatted as follows: `LOAN_APPLICATION#<loan-application-id>#TIMESTAMP#<timestamp>` 
+
+<details>
+  <summary>Hint</summary>
+  Take a look at the <code>backend/src/adaptors/secondary/ddb-put-borrowing-capacity-calculation.ts</code> secondary adapter.
+</details>
+
+<details>
+  <summary>Solution</summary>
+
+```typescript title="backend/src/adaptors/secondary/ddb-put-loan-application.ts"
+import { InternalError } from '@/errors/InternalError';
+import { PutLoanApplicationPort } from '@/ports/secondary/DynamoDBPutLoanApplication';
+import { DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb';
+import { marshall } from '@aws-sdk/util-dynamodb';
+import { Config } from 'sst/node/config';
+
+const dynamoDbClient = new DynamoDBClient();
+
+export const putLoanApplication: PutLoanApplicationPort = async ({
+  borrowerEmail,
+  loanApplicationId,
+  timestamp,
+  creditScore,
+  grossAnnualIncome,
+  monthlyExpenses,
+  loanApplicationStatus,
+  employmentStatus,
+}) => {
+  await dynamoDbClient.send(
+    new PutItemCommand({
+      TableName: Config.FINANCIAL_DATA_TABLE_NAME,
+      Item: marshall({
+        pk: borrowerEmail,
+        sk: `LOAN_APPLICATION#${loanApplicationId}#TIMESTAMP#${timestamp}`,
+        loanApplicationId,
+        timestamp,
+        creditScore,
+        grossAnnualIncome,
+        monthlyExpenses,
+        loanApplicationStatus,
+        employmentStatus,
+      }),
+    })
+  );
+};
+```
+</details>
+
+
+### But wait, there's more!
+
+We're violating the port's interface if we let DynamoDB errors bubble up into the use case. The use case should only be concerned with domain entities and errors. Unfortunately, we can't force DynamoDB to fail on demand. 
+
+
+>Question: Can you think of a way to simulate a DynamoDB failure? 
+
+<details>
+  <summary>Answer</summary>
+  If you thought of <code>mocks</code>, then you're on the right track!
+</details>
+
+Navigate to the unit test for the secondary adapter: `backend/src/adaptors/secondary/ddb-put-loan-application.spec.ts`.
+
+
+We should avoid propagating DynamoDB errors into our use case. For this reason, we need to catch any such errors, and re-throw a domain specific error that can be handled deterministically in the use case. 
+
+
+```typescript title="backend/src/adaptors/secondary/ddb-put-loan-application.spec.ts"
+describe('ddb-put-loan-application', () => {
+  vi.mock('sst/node/config', () => ({
+    Config: {
+      FINANCIAL_DATA_TABLE_NAME: 'financial-data-table',
+    },
+  }));
+  const dynamoDbMock = mockClient(DynamoDBClient);
+
+  beforeEach(() => {
+    dynamoDbMock.reset();
+  });
+
+  const loanApplication: PutLoanApplicationInput = {
+    borrowerEmail: 'john.doe@example',
+    creditScore: 700,
+    employmentStatus: 'FULL_TIME',
+    grossAnnualIncome: 100000,
+    loanApplicationId: 'd5fe6ff5-20b3-4581-b38f-9b034c20d783',
+    loanApplicationStatus: 'APPROVED',
+    monthlyExpenses: 5000,
+    timestamp: '2024-03-15T00:00:00.000Z',
+  };
+  // highlight-start
+  it('throws an InternalError when the dynamodb client rejects for any reason', async () => {
+    dynamoDbMock.rejects(
+      new DynamoDBServiceException({
+        message: 'something went wrong',
+        $metadata: {},
+        name: 'ServiceException',
+        $fault: 'client',
+      })
+    );
+    await expect(putLoanApplication(loanApplication)).rejects.toBeInstanceOf(
+      InternalError
+    );
+  });
+  // highlight-end
+});
+```
+
+### Start the test watcher
+
+If your tests are not running, issue the following command:
+
+```shell
+pnpm run test
+```
+
+You should see a failing test case, similar to the following:
+
+![Failing `Apply for Loan` integration test](/img/loan-application/failing-apply-for-loan-unit-test.png)
+
+### Make the failing unit test pass
+
+Navigate to `backend/src/adaptors/secondary/ddb-put-loan-application.ts`.
+
+You'll need wrap the call to `dynamoDBClient.send(...)` with a `try/catch` block.
+
+<details>
+  <summary>Hint</summary>
+  We want to stop DynamoDB errors from being propagated. Catch any error that is thrown and throw a <code>InternalError</code> instead.
+</details>
+
+<details>
+  <summary>Solution</summary>
+
+```typescript title="backend/src/adaptors/secondary/ddb-put-loan-application.ts"
+// highlight-next-line
+try {
+  await dynamoDbClient.send(
+    new PutItemCommand({
+      TableName: Config.FINANCIAL_DATA_TABLE_NAME,
+      Item: marshall({
+        pk: borrowerEmail,
+        sk: `LOAN_APPLICATION#${loanApplicationId}#TIMESTAMP#${timestamp}`,
+        loanApplicationId,
+        timestamp,
+        creditScore,
+        grossAnnualIncome,
+        monthlyExpenses,
+        loanApplicationStatus,
+        employmentStatus,
+      }),
+    })
+  );
+// highlight-start
+} catch (e) {
+  throw new InternalError(
+    'Failed to put loan application to financial data table'
+  );
+}
+// highlight-end
+```
+</details>

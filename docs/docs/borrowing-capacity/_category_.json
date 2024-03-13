@@ -1,0 +1,10 @@
+{
+  "position": 8,
+  "label": "Borrowing Capacity",
+  "collapsible": true,
+  "collapsed": false,
+  "link": {
+    "type": "generated-index",
+    "title": "Borrowing Capacity"
+  }
+}

@@ -1,0 +1,23 @@
+---
+sidebar_position: 2
+tags:
+  - loan-application table-design
+---
+
+# Table Design
+
+## Attributes
+
+| Name                  | Type   | Example                                                                                  | Description                                                                                        |
+|-----------------------|--------|------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------|
+| pk                    | string | john.doe@example.com                                                                     | Primary Key: The borrower's email address                                                          |
+| sk                    | string | LOAN_APPLICATION#2dd0ce10-4d28-4275-af31-b2e5edc7430a#TIMESTAMP#2024-03-15T00:00:00.000Z | Sort Key: The entity type ('LOAN_APPLICATION'),  loanApplicationId and timestamp separated by '#'  |
+| loanApplicationStatus | string | 'APPROVED'                                                                               | The borrower's employment status. One of 'APPROVED', 'REJECTED', 'REVIEW'                          |
+| creditScore           | number | 700                                                                                      | Borrower's credit score. This is a number between 0 and 1000                                       |
+| grossAnnualIncome     | number | 40000                                                                                    | The borrower's gross annual income. This is a number >= 0                                          |
+| monthlyExpenses       | number | 1560                                                                                     | The borrower's monthly expenses. This is a number >= 0                                             |
+| employmentStatus      | string | 'FULL_TIME'                                                                              | The borrower's employment status. One of 'FULL_TIME', 'PART_TIME', 'CASUAL', 'SELF_EMPLOYED'       |
+| loanApplicationId     | string | '2dd0ce10-4d28-4275-af31-b2e5edc7430a'                                                   | A randomly generated V4 UUID                                                                       |
+| timestamp             | string | '2024-03-15T00:00:00.000Z`                                                               | The time of the loan application. This is an ISO8061 date and time in UTC.                         |
+
+![Borrower Profile - Table Design](/img/loan-application/table-desgin-borrowing-capacity-and-borrower-profile-and-loan-application.png)

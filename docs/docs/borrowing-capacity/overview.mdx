@@ -1,7 +1,7 @@
 ---
-sidebar_position: 7
+sidebar_position: 3
 tags:
-  - borrowing-capacity
+  - borrowing-capacity overview
 ---
 
 # Borrowing Capacity
@@ -17,27 +17,20 @@ tags:
 5. The `calculate-borrowing-capacity` use case calculates the borrowing capacity and uses a secondary adaptor `ddb-put-borrowing-capacity-calculation` to persist the borrowing capacity calculation to DynamoDB.
 6. The estimated borrowing capacity is returned to the user through the primary adaptor.
 
-## `calculate-borrowing-capacity` Use Case
+
+
+## How Is Borrowing Capacity Calculated?
+
+Borrowing capacity is calculated in three steps:
+
+1. Calculate the borrower's _Base Borrowing Capacity (BBC)_
+2. Adjust BBC according to Employment Status
+3. Adjust the Employment Adjusted Borrowing Capacity based on borrower's age
+4. Return the final _Borrowing Capacity_
 
 ```mermaid
 graph TD
-    A[Start] --> B[Retrieve borrower's profile using email]
-    B --> C{Borrower profile exists?}
-    C -- Yes --> D[Calculate borrower's age]
-    C -- No --> E[Throw BorrowerProfileDoesNotExistError]
-    D --> F[Calculate base borrowing capacity]
-    F --> G[Adjust for employment status]
-    G --> H[Adjust for age]
-    H --> I[Save estimated borrowing capacity calculation]
-    I --> J[Return estimated borrowing capacity]
-    J --> K[End]
-```
-
-### Calculation of Base, Employment Adjusted & Age Adjusted Borrowing Capacity 
-
-```mermaid
-graph TD
-    A[Start] --> B{Input Age, Gross Annual Income, Employment Status}
+    A[Start] --> B{INPUT: Age, Gross Annual Income, Employment Status}
     B --> C[Calculate Base Borrowing Capacity - BBC]
     C -->|Full-time| D[Employment Adjustment: 100% of BBC]
     C -->|Part-time| E[Employment Adjustment: 90% of BBC]
@@ -52,6 +45,24 @@ graph TD
     I --> K[Return Final Borrowing Capacity]
     J --> K
 
+```
+
+## `calculate-borrowing-capacity` Use Case
+
+```mermaid
+graph TD
+    A[Start] --> B[Retrieve borrower's profile using email]
+    B --> C{Borrower profile exists?}
+    C -- Yes --> D[Calculate borrower's age]
+    C -- No --> E[Throw BorrowerProfileDoesNotExistError]
+    subgraph Borrowing Capacity Calculation Logic
+    D --> F[Calculate base borrowing capacity]
+    F --> G[Adjust for employment status]
+    G --> H[Adjust for age]
+    end
+    H --> I[Save estimated borrowing capacity calculation]
+    I --> J[Return estimated borrowing capacity]
+    J --> K[End]
 ```
 
 ## Scenarios

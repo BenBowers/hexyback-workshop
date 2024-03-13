@@ -1,0 +1,53 @@
+---
+sidebar_position: 5
+tags:
+  - deployment
+---
+
+# Deployment
+
+1. Install dependencies
+
+  ```shell
+  pnpm i
+  ```
+
+2. Change into the `backend` directory
+
+  ```shell
+  cd backend
+  ```
+
+3. Run the deployment target
+
+  ```shell
+  pnpm run deploy
+  ```
+
+  You'll be prompted to a stage name. Enter your first name and hit `Enter ⏎`:
+
+  ```shell
+  Please 
+  ```
+
+4. Run the unit tests:
+
+  ```shell
+  pnpm run test
+  ```
+
+5. Exit the running tests (they are being watched) by pressing `q`
+
+6. Run the integration tests:
+
+  ```shell
+  pnpm run test:integration
+  ```
+
+7. Exit the running tests (they are being watched) by pressing `q`
+
+8. In a new terminal, run the following
+
+  ```shell
+  pnpm run docs
+  ```
