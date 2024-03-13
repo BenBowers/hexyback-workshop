@@ -1,11 +1,11 @@
 import { InternalError } from '@/errors/InternalError';
 import { PutBorrowingCapacityCalculationPort } from '@/ports/secondary/DynamoDBPutBorrowingCapacityCalculation';
+import { Log, getTracer } from '@/utils/telemetry';
 import { DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb';
 import { marshall } from '@aws-sdk/util-dynamodb';
 import { Config } from 'sst/node/config';
 
-const dynamoDbClient = new DynamoDBClient();
-
+const dynamoDbClient = getTracer().captureAWSv3Client(new DynamoDBClient({}));
 export const putBorrowingCapacityCalculation: PutBorrowingCapacityCalculationPort =
   async ({
     borrowingCapacityCalculationId,
@@ -16,6 +16,9 @@ export const putBorrowingCapacityCalculation: PutBorrowingCapacityCalculationPor
     employmentStatus,
   }) => {
     try {
+      Log.info(
+        `Putting borrowing capacity calculation ${borrowingCapacityCalculationId} for borrower ${borrowerEmail}`
+      );
       await dynamoDbClient.send(
         new PutItemCommand({
           TableName: Config.FINANCIAL_DATA_TABLE_NAME,
