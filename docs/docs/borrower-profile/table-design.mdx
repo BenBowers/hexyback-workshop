@@ -1,0 +1,21 @@
+---
+sidebar_position: 2
+tags:
+  - borrower-profile table-design
+---
+
+# Table Design
+
+## Attributes 
+
+| Name        | Type   | Example              | Description                                                  |
+|-------------|--------|----------------------|--------------------------------------------------------------|
+| pk          | string | john.doe@example.com | Primary Key: The borrower's email address                    |
+| sk          | string | BORROWER             | Sort Key: The entity type (BORROWER)                         |
+| creditScore | number | 500                  | Borrower's credit score. This is a number between 0 and 1000 |
+| dob         | string | '1985-09-01'         | Borrower's date of birth as an ISO8061 date string           |
+| email       | string | john.doe@example.com | Borrower's email address                                     |
+| name        | string | John Doe             | Borrower's name                                              |
+
+
+![Borrower Profile - Table Design](/img/borrower/table-design-borrower-profile.png)

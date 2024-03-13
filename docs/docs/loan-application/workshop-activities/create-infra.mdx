@@ -1,0 +1,255 @@
+---
+sidebar_position: 1
+tags:
+  - create-infra
+---
+
+# Create Infrastructure
+
+## Update OpenAPI Specification
+
+Update the OpenApi specification to include the loan application scenarios we discussed.
+
+In `generateApiSpec` function, under `components > schemas` add the following schemas:
+
+```typescript title="backend/infra/api-definition.ts"
+LoanApplicationStatus: {
+  type: 'string',
+  enum: ['APPROVED', 'REJECTED', 'REVIEW'],
+},
+LoanApplication: {
+  type: 'object',
+  required: [
+    'borrowerEmail',
+    'employmentStatus',
+    'grossAnnualIncome',
+    'monthlyExpenses',
+  ],
+  properties: {
+    borrowerEmail: {
+      type: 'string',
+    },
+    employmentStatus: {
+      $ref: '#/components/schemas/EmploymentStatus',
+    },
+    grossAnnualIncome: {
+      type: 'integer',
+    },
+    monthlyExpenses: {
+      type: 'integer',
+    },
+  },
+}
+```
+Under `paths` add the following path:
+
+```typescript title="backend/infra/api-definition.ts"
+'/loan': {
+  post: {
+    summary: 'Apply for a loan',
+    requestBody: {
+      required: true,
+      content: {
+        'application/json': {
+          schema: {
+            $ref: '#/components/schemas/LoanApplication',
+          },
+        },
+      },
+    },
+    description: 'Assesses a borrowers loan application',
+    responses: {
+      '201': {
+        description: 'Loan application created',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              required: ['loanApplicationStatus'],
+              properties: {
+                loanApplicationStatus: {
+                  schema: {
+                    $ref: '#/components/schemas/LoanApplicationStatus',
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      '500': {
+        description: 'Internal Server Error',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              required: ['message'],
+              properties: {
+                message: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    'x-amazon-apigateway-integration': {
+      uri: `arn:\${AWS::Partition}:apigateway:\${AWS::Region}:lambda:path/2015-03-31/functions/${applyForLoanHandlerArn}/invocations`,
+      responses: {
+        default: {
+          statusCode: '200',
+        },
+      },
+      passthroughBehavior: 'when_no_match',
+      httpMethod: 'POST',
+      contentHandling: 'CONVERT_TO_TEXT',
+      type: 'aws_proxy',
+    },
+  },
+},
+```
+
+
+## Add an "Apply for Loan" lambda handler
+
+```typescript title="backend/infra/ConfigStack.ts"
+export function ConfigStack({ stack, app }: StackContext) {
+  // ...
+  const calculateBorrowingCapacityHandler = new Function(
+    stack,
+    'calculateBorrowingCapacityLambda',
+    {
+      handler:
+        'src/adaptors/primary/api-gw-calculate-borrowing-capacity.handler',
+      functionName: app.logicalPrefixedName('CalculateBorrowingCapacity'),
+      bind: [FINANCIAL_DATA_TABLE_NAME],
+      permissions: [[financialDataTable.cdk.table, 'grantReadWriteData']],
+    }
+  );
+  // highlight-start
+  const applyForLoanHandler = new Function(stack, 'applyForLoanHandlerLambda', {
+    handler: 'src/adaptors/primary/api-gw-apply-for-loan.handler',
+    functionName: app.logicalPrefixedName('ApplyForLoan'),
+    bind: [FINANCIAL_DATA_TABLE_NAME],
+    permissions: [[financialDataTable.cdk.table, 'grantReadWriteData']],
+  });
+  // highlight-end
+  const createBorrowerProfileHandler = new Function(
+  stack,
+  'createBorrowerProfileHandlerLambda',
+  {
+    handler: 'src/adaptors/primary/api-gw-create-borrower-profile.handler',
+    functionName: app.logicalPrefixedName('CreateBorrowerProfile'),
+    bind: [FINANCIAL_DATA_TABLE_NAME],
+    permissions: [[financialDataTable.cdk.table, 'grantReadWriteData']],
+  }
+);
+// ...
+}
+```
+## Add the Lambda Handler parameter to OpenAPI Specification
+
+Update the call to `generateApiSpec` function to include the `applyForLoanHandlerArn`:
+
+```typescript title="backend/infra/ConfigStack.ts"
+// ...
+apiDefinition: apigateway.ApiDefinition.fromInline(
+  generateApiSpec({
+    calculateBorrowingCapacityHandlerArn:
+      calculateBorrowingCapacityHandler.functionArn,
+      //highlight-next-line
+    applyForLoanHandlerArn: applyForLoanHandler.functionArn,
+    createBorrowerProfileHandlerArn:
+      createBorrowerProfileHandler.functionArn,
+  })
+),
+// ...
+```
+## Grant API Gateway permission to invoke the Apply for Loan lambda
+
+```typescript title="backend/infra/ConfigStack.ts"
+// ...
+  calculateBorrowingCapacityHandler.grantInvoke(
+    new iam.ServicePrincipal('apigateway.amazonaws.com', {
+      conditions: {
+        ArnLike: {
+          'aws:SourceArn': api.arnForExecuteApi(
+            'GET',
+            '/borrowingCapacity',
+            api.deploymentStage.stageName
+          ),
+        },
+      },
+    })
+  );
+  // highlight-start
+  applyForLoanHandler.grantInvoke(
+    new iam.ServicePrincipal('apigateway.amazonaws.com', {
+      conditions: {
+        ArnLike: {
+          'aws:SourceArn': api.arnForExecuteApi(
+            'POST',
+            '/loan',
+            api.deploymentStage.stageName
+          ),
+        },
+      },
+    })
+  );
+  // highlight-end
+  Config.Parameter.create(stack, {
+    API_ENDPOINT: api.url,
+  });
+  // ...
+  ```
+
+## Deploy your changes
+
+Run the following command:
+
+```shell
+pnpm run deploy
+```
+
+You should see the following once the deployment is complete:
+
+```shell
+✔  Building...
+ 
+|  ConfigStack PUBLISH_ASSETS_COMPLETE 
+|  ConfigStack applyForLoanHandlerLambda/ServiceRole AWS::IAM::Role CREATE_COMPLETE 
+|  ConfigStack applyForLoanHandlerLambda/ServiceRole/DefaultPolicy AWS::IAM::Policy CREATE_COMPLETE 
+|  ConfigStack applyForLoanHandlerLambda AWS::Lambda::Function CREATE_COMPLETE 
+|  ConfigStack applyForLoanHandlerLambda/Parameter_functionName AWS::SSM::Parameter CREATE_COMPLETE 
+|  ConfigStack SourcemapUploader Custom::SourcemapUploader UPDATE_COMPLETE 
+|  ConfigStack loanApiGateway AWS::ApiGateway::RestApi UPDATE_COMPLETE 
+|  ConfigStack applyForLoanHandlerLambda/LogRetention Custom::LogRetention CREATE_COMPLETE 
+|  ConfigStack loanApiGateway/Deployment AWS::ApiGateway::Deployment CREATE_COMPLETE 
+|  ConfigStack loanApiGateway/DeploymentStage.prod AWS::ApiGateway::Stage UPDATE_COMPLETE 
+|  ConfigStack applyForLoanHandlerLambda AWS::Lambda::Permission CREATE_COMPLETE 
+|  ConfigStack calculateBorrowingCapacityLambda AWS::Lambda::Permission CREATE_COMPLETE 
+|  ConfigStack createBorrowerProfileHandlerLambda AWS::Lambda::Permission CREATE_COMPLETE 
+|  ConfigStack AWS::Lambda::Permission DELETE_COMPLETE 
+|  ConfigStack AWS::Lambda::Permission DELETE_COMPLETE 
+|  ConfigStack AWS::ApiGateway::Deployment DELETE_COMPLETE 
+|  ConfigStack AWS::CloudFormation::Stack UPDATE_COMPLETE 
+⠋  Deploying...
+ 
+✔  Deployed:
+   ConfigStack
+   apiEndpoint: https://xxxxxx.execute-api.ap-southeast-2.amazonaws.com/prod/
+   loanApiGatewayEndpointDA311BAB: https://xxxxxx.execute-api.ap-southeast-2.amazonaws.com/prod/
+```
+
+## Restart your documentation server
+
+Kill the running documentation server (`Ctrl+C`) and run the following:
+
+```shell
+pnpm run docs
+```
+
+Navigate to: `http://localhost:3000/docs/hexy/apply-for-a-loan`. You'll see the updated API documentation for the `Apply for Loan` endpoint:
+
+![`Apply for Loan` API Endpoint](/img/loan-application/updated-apply-for-loan-api-docs.png)

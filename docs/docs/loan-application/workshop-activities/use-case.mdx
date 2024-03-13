@@ -1,0 +1,811 @@
+---
+sidebar_position: 3
+tags:
+  - use-case
+---
+
+# Use Case
+
+
+## Processing a loan application
+
+Add the following test cases to `process-loan-application.spec.ts`:
+
+```typescript title="backend/src/use-cases/loan-assessment/process-loan-application.spec.ts"
+// ...
+describe('process loan-application', () => {
+  // ...
+  // highlight-start
+  describe('given a borrower email, gross annual income, employment status and monthly expenses', () => {
+    it.todo('fetches the borrowers profile from the database', async () => {
+      await processLoanApplication(processLoanApplicationInput);
+      expect(getBorrowerProfileSpy).toHaveBeenCalledWith(
+        processLoanApplicationInput.borrowerEmail
+      );
+    });
+    describe('given the borrower profile is not found', () => {
+      it.todo('rejects with borrower not found error', () => {
+        getBorrowerProfileSpy.mockResolvedValue(undefined);
+        return expect(
+          processLoanApplication(processLoanApplicationInput)
+        ).rejects.toBeInstanceOf(BorrowerProfileDoesNotExistError);
+      });
+    });
+    describe('given the get borrower profile adaptor rejects with an internal error', () => {
+      it.todo('rejects with the error', () => {
+      });
+    });
+    describe('given the borrower profile is successfully retrieved', () => {
+      it.todo(
+        'calls the assess loan application use case with the ' +
+          'borrowers age, employment status, gross annual income, monthly expenses and credit score',
+        async () => {
+        }
+      );
+      it.todo('writes the loan application to the database', async () => {
+      });
+      describe('given the write to the database succeeds', () => {
+        it.todo('resolves with the loan application status', () => {
+        });
+      });
+      describe('given the write to the database rejects', () => {
+        it.todo('rejects with the error', () => {
+        });
+      });
+    });
+  });
+  // highlight-end
+});
+```
+
+## Faking System Time
+
+The calculation of the borrower's age is time dependent. To avoid the borrower`s calculated age changing, based on our system time, we need to mock the system time.
+
+
+```typescript title="backend/src/use-cases/loan-assessment/process-loan-application.spec.ts"
+describe('process loan-application', () => {
+  // highlight-start
+  const systemTime = new Date(2024, 2, 15);
+  const mockedTimestamp = systemTime.toISOString();
+ 
+  beforeAll(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(systemTime);
+  });
+  afterAll(() => {
+    vi.useRealTimers();
+  });
+  // highlight-end
+  // ...
+```
+
+We're going to use `vi-test` fake timers to fix the system date time to 15th of March 2024. 
+
+>Note: Months are 0-indexed, so March will be 2, not 3. Days funnily enough, are not 1-indexed. Go figure...
+
+```typescript title="backend/src/use-cases/loan-assessment/process-loan-application.spec.ts"
+describe('process loan-application', () => {
+  // highlight-next-line
+  const systemTime = new Date(2024, 2, 15);
+  const mockedTimestamp = systemTime.toISOString();
+ 
+  beforeAll(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(systemTime);
+  });
+  afterAll(() => {
+    vi.useRealTimers();
+  });
+  // ...
+```
+
+## Mocking the adapters
+
+Because this is a unit test for the `process-loan-application` use case, we're only focussed on verifying the orchestration of the various tasks performed by the use case. 
+
+So, we don't want to exercise the secondary DynamoDB adapters used to get a borrower profile and put a loan application. To do this we'll need to mock out both the `ddb-get-borrower-profile` and `ddb-put-loan-application` adapters:
+
+```typescript title="backend/src/use-cases/loan-assessment/process-loan-application.spec.ts"
+describe('process loan-application', () => {
+  // ...
+  // highlight-start
+  vi.mock('@/adaptors/secondary/ddb-get-borrower-profile', () => ({
+    getBorrowerProfile: vi.fn(() => Promise.resolve(undefined)),
+  }));
+  const getBorrowerProfileSpy = vi.mocked(getBorrowerProfile);
+  vi.mock('@/adaptors/secondary/ddb-put-loan-application', () => ({
+    putLoanApplication: vi.fn(() => Promise.resolve(undefined)),
+  }));
+  const putLoanApplicationSpy = vi.mocked(putLoanApplication);
+  // highlight-end
+  vi.mock('./assess-loan-application', () => ({
+    assessLoanApplication: vi.fn(() => Promise.resolve(undefined)),
+  }));
+  const assessLoanApplicationSpy = vi.mocked(assessLoanApplication);
+  
+  beforeEach(() => {
+    vi.resetAllMocks();
+    getBorrowerProfileSpy.mockResolvedValue(borrowerProfile);
+    assessLoanApplicationSpy.mockReturnValue('APPROVED');
+  });
+  // ...
+```
+
+Additionally, we're not interested in testing the business logic, as it relates to assessing a loan application. We'll also need to mock out the calls to `assessLoanApplication`. 
+
+```typescript title="backend/src/use-cases/loan-assessment/process-loan-application.spec.ts"
+describe('process loan-application', () => {
+  // ...
+  vi.mock('@/adaptors/secondary/ddb-get-borrower-profile', () => ({
+    getBorrowerProfile: vi.fn(() => Promise.resolve(undefined)),
+  }));
+  const getBorrowerProfileSpy = vi.mocked(getBorrowerProfile);
+  vi.mock('@/adaptors/secondary/ddb-put-loan-application', () => ({
+    putLoanApplication: vi.fn(() => Promise.resolve(undefined)),
+  }));
+  const putLoanApplicationSpy = vi.mocked(putLoanApplication);
+  vi.mock('./assess-loan-application', () => ({
+    assessLoanApplication: vi.fn(() => Promise.resolve(undefined)),
+  }));
+  //highlight-next-line
+  const assessLoanApplicationSpy = vi.mocked(assessLoanApplication);
+  
+  beforeEach(() => {
+    vi.resetAllMocks();
+    //highlight-next-line
+    getBorrowerProfileSpy.mockResolvedValue(borrowerProfile);
+    assessLoanApplicationSpy.mockReturnValue('APPROVED');
+  });
+  // ...
+```
+
+## Verify Retrieval of Borrower Profile
+
+Unskip the test case. Remove the `.todo`: `it.todo(...)` --> `it(...)`:
+
+```typescript title="backend/src/use-cases/loan-assessment/process-loan-application.spec.ts"
+// ...
+describe('process loan-application', () => {
+  // ...
+  describe('given a borrower email, gross annual income, employment status and monthly expenses', () => {
+    // highlight-next-line
+    it('fetches the borrowers profile from the database', async () => {
+      await processLoanApplication(processLoanApplicationInput);
+      expect(getBorrowerProfileSpy).toHaveBeenCalledWith(
+        processLoanApplicationInput.borrowerEmail
+      );
+    });
+    // ...
+  });
+});
+```
+Note the currently failing test in your terminal:
+
+![Failing secondary adapter test - fetch borrower from database](/img/loan-application/failing-secondary-adapter-test-fetch-borrower.png)
+
+Next, make this test pass. To this, you'll need to get the borrower profile using the correct secondary adapter. 
+
+<details>
+  <summary>Hint</summary>
+  Take a look at `backend/src/ports/secondary/DynamoBDGetBorrowerProfile.ts`.
+</details>
+
+<details>
+  <summary>Solution</summary>
+
+```typescript title="backend/src/use-cases/loan-assessment/process-loan-application.ts"
+import { getBorrowerProfile } from '@/adaptors/secondary/ddb-get-borrower-profile';
+  import { putLoanApplication } from '@/adaptors/secondary/ddb-put-loan-application';
+  import { BorrowerProfileDoesNotExistError } from '@/errors/BorrowerProfileDoesNotExistError';
+  import { ProcessLoanApplicationPort } from '@/ports/primary/ProcessLoanApplication';
+  import { getYearsSinceCurrentDate } from '@/utils/get-years-since-current-date';
+  import { randomUUID } from 'crypto';
+  import { assessLoanApplication } from './assess-loan-application';
+  
+  const calculateAge = (dateOfBirth: Date): number => 
+  getYearsSinceCurrentDate(dateOfBirth);
+  export const processLoanApplication: ProcessLoanApplicationPort = async ({
+    borrowerEmail,
+    grossAnnualIncome,
+    employmentStatus,
+    monthlyExpenses,
+  }) => { 
+    //highlight-next-line
+    const borrowerProfile = await getBorrowerProfile(borrowerEmail);
+  }
+```
+
+</details>
+
+
+## Handle Non-Existent Borrower Profile
+
+Unskip the next test case. Remove the `.todo`: `it.todo(...)` --> `it(...)`:
+
+
+```typescript title="backend/src/use-cases/loan-assessment/process-loan-application.spec.ts"
+// ...
+describe('process loan-application', () => {
+  // ...
+  describe('given a borrower email, gross annual income, employment status and monthly expenses', () => {
+    // ...
+    describe('given the borrower profile is not found', () => {
+      // highlight-next-line
+      it('rejects with borrower not found error', () => {
+        getBorrowerProfileSpy.mockResolvedValue(undefined);
+        return expect(
+          processLoanApplication(processLoanApplicationInput)
+        ).rejects.toBeInstanceOf(BorrowerProfileDoesNotExistError);
+      });
+    });
+    // ...
+  });
+});
+```
+
+### Start the test watcher
+
+If your tests are not running, issue the following command:
+
+```shell
+pnpm run test
+```
+
+You should see a failing test case, similar to the following:
+
+![2nd Failing `Apply for Loan` unit test](/img/loan-application/failing-apply-for-loan-unit-test-2.png)
+
+### Make the failing unit test pass
+
+Navigate to `backend/src/adaptors/secondary/ddb-put-loan-application.ts`.
+
+Next, make this test pass.
+
+<details>
+  <summary>Hint</summary>
+  To this, you'll need to throw a <code>BorrowerProfileDoesNotExistError</code> error if the <code>borrowerProfile</code>.
+</details>
+
+<details>
+  <summary>Solution</summary>
+
+```typescript title="backend/src/use-cases/loan-assessment/process-loan-application.ts"
+import { getBorrowerProfile } from '@/adaptors/secondary/ddb-get-borrower-profile';
+  import { putLoanApplication } from '@/adaptors/secondary/ddb-put-loan-application';
+  import { BorrowerProfileDoesNotExistError } from '@/errors/BorrowerProfileDoesNotExistError';
+  import { ProcessLoanApplicationPort } from '@/ports/primary/ProcessLoanApplication';
+  import { getYearsSinceCurrentDate } from '@/utils/get-years-since-current-date';
+  import { randomUUID } from 'crypto';
+  import { assessLoanApplication } from './assess-loan-application';
+  
+  const calculateAge = (dateOfBirth: Date): number => 
+  getYearsSinceCurrentDate(dateOfBirth);
+  export const processLoanApplication: ProcessLoanApplicationPort = async ({
+    borrowerEmail,
+    grossAnnualIncome,
+    employmentStatus,
+    monthlyExpenses,
+  }) => { 
+    const borrowerProfile = await getBorrowerProfile(borrowerEmail);
+    //highlight-start
+    if (!borrowerProfile) {
+      throw new BorrowerProfileDoesNotExistError('Borrower profile not found');
+    }
+    //highlight-end
+  }
+```
+
+</details>
+
+## Handle Internal Error in Borrower Profile Adapter
+
+Unskip the next test case. Remove the `.todo`: `it.todo(...)` --> `it(...)`:
+
+
+```typescript title="backend/src/use-cases/loan-assessment/process-loan-application.spec.ts"
+// ...
+describe('process loan-application', () => {
+  // ...
+  describe('given a borrower email, gross annual income, employment status and monthly expenses', () => {
+    // ...
+    describe('given the get borrower profile adaptor rejects with an internal error', () => {
+      // highlight-next-line
+      it('rejects with the error', () => {
+        const error = new InternalError('Cheers Kent');
+        getBorrowerProfileSpy.mockRejectedValue(error);
+        return expect(
+          processLoanApplication(processLoanApplicationInput)
+        ).rejects.toBe(error);
+      });
+    });
+    // ...
+  });
+});
+```
+
+### Start the test watcher
+
+If your tests are not running, issue the following command:
+
+```shell
+pnpm run test
+```
+
+You should see a passing test case, similar to the following:
+
+![3rd Passing `Apply for Loan` unit test](/img/loan-application/passing-apply-for-loan-unit-test-3.png)
+
+>Note: The reason this test passes without any change required is because the secondary adapter (specification: `ddb-get-borrower-profile.spec.ts`) already throws an `InternalError` if a borrower profile cannot be found.
+
+## Verify Loan Processing
+
+Unskip the next test case. Remove the `.todo`: `it.todo(...)` --> `it(...)`:
+
+```typescript title="backend/src/use-cases/loan-assessment/process-loan-application.spec.ts"
+// ...
+describe('process loan-application', () => {
+  // ...
+  describe('given a borrower email, gross annual income, employment status and monthly expenses', () => {
+    // ...
+     describe('given the borrower profile is successfully retrieved', () => {
+       // highlight-next-line
+      it(
+        'calls the assess loan application use case with the ' +
+          'borrowers age, employment status, gross annual income, monthly expenses and credit score',
+        async () => {}
+      );
+      // ...
+     });
+    // ...
+  });
+});
+```
+
+Next, write a failing test.
+
+<details>
+  <summary>Hint</summary>
+  You'll need to use the <code>toHaveBeenCalledWith</code> matcher.
+</details>
+
+<details>
+  <summary>Solution</summary>
+
+```typescript title="backend/src/use-cases/loan-assessment/process-loan-application.spec.ts"
+// ...
+describe('process loan-application', () => {
+  // ...
+  describe('given a borrower email, gross annual income, employment status and monthly expenses', () => {
+    // ...
+     describe('given the borrower profile is successfully retrieved', () => {
+      it(
+        'calls the assess loan application use case with the ' +
+          'borrowers age, employment status, gross annual income, monthly expenses and credit score',
+        async () => {
+          // highlight-start
+          await processLoanApplication(processLoanApplicationInput);
+          expect(assessLoanApplicationSpy).toHaveBeenCalledWith({
+            age: 42,
+            creditScore: borrowerProfile.creditScore,
+            employmentStatus: processLoanApplicationInput.employmentStatus,
+            grossAnnualIncome: processLoanApplicationInput.grossAnnualIncome,
+            monthlyExpenses: processLoanApplicationInput.monthlyExpenses,
+          });
+          // highlight-end
+        }
+      );
+      // ...
+     });
+    // ...
+  });
+});
+```
+
+</details>
+
+### Start the test watcher
+
+If your tests are not running, issue the following command:
+
+```shell
+pnpm run test
+```
+
+You should see a failing test case, similar to the following:
+
+![4th Failing `Apply for Loan` unit test](/img/loan-application/failing-apply-for-loan-unit-test-4.png)
+
+### Make the failing unit test pass
+
+Navigate to `backend/src/adaptors/secondary/ddb-put-loan-application.ts`.
+
+Next, make this test pass.
+
+The `assessLoanApplication` function should be used to determine the status of the loan application.
+
+<details>
+  <summary>Hint</summary>
+  Take a look at the specification of <code>assessLoanApplication</code> to understand how to use it. It's located here: <code>backend/src/use-cases/loan-assessment/assess-loan-application.spec.ts</code>
+</details>
+
+<details>
+  <summary>Hint</summary>
+  You'll need to use the <code>calculateAge</code> function to compute the borrower's age from their date of birth. 
+</details>
+
+<details>
+  <summary>Solution</summary>
+
+```typescript title="backend/src/use-cases/loan-assessment/process-loan-application.ts"
+import { getBorrowerProfile } from '@/adaptors/secondary/ddb-get-borrower-profile';
+  import { putLoanApplication } from '@/adaptors/secondary/ddb-put-loan-application';
+  import { BorrowerProfileDoesNotExistError } from '@/errors/BorrowerProfileDoesNotExistError';
+  import { ProcessLoanApplicationPort } from '@/ports/primary/ProcessLoanApplication';
+  import { getYearsSinceCurrentDate } from '@/utils/get-years-since-current-date';
+  import { randomUUID } from 'crypto';
+  import { assessLoanApplication } from './assess-loan-application';
+  
+  const calculateAge = (dateOfBirth: Date): number => 
+  getYearsSinceCurrentDate(dateOfBirth);
+  export const processLoanApplication: ProcessLoanApplicationPort = async ({
+    borrowerEmail,
+    grossAnnualIncome,
+    employmentStatus,
+    monthlyExpenses,
+  }) => { 
+    const borrowerProfile = await getBorrowerProfile(borrowerEmail);
+    if (!borrowerProfile) {
+      throw new BorrowerProfileDoesNotExistError('Borrower profile not found');
+    }
+    //highlight-start
+    const { creditScore, dob } = borrowerProfile;
+    const loanApplicationStatus = assessLoanApplication({
+      grossAnnualIncome,
+      employmentStatus,
+      monthlyExpenses,
+      creditScore,
+      age: calculateAge(new Date(dob)),
+    });
+    //highlight-end
+  }
+```
+
+</details>
+
+## Verify Peristence of Loan Application
+
+Unskip the next test case. Remove the `.todo`: `it.todo(...)` --> `it(...)`:
+
+```typescript title="backend/src/use-cases/loan-assessment/process-loan-application.spec.ts"
+// ...
+describe('process loan-application', () => {
+  // ...
+  describe('given a borrower email, gross annual income, employment status and monthly expenses', () => {
+    // ...
+     describe('given the borrower profile is successfully retrieved', () => {
+       // highlight-next-line
+       it('writes the loan application to the database', async () => {
+        await processLoanApplication(processLoanApplicationInput);
+        expect(putLoanApplicationSpy).toHaveBeenCalledWith({
+          loanApplicationId: expect.any(String),
+          borrowerEmail: processLoanApplicationInput.borrowerEmail,
+          creditScore: borrowerProfile.creditScore,
+          employmentStatus: processLoanApplicationInput.employmentStatus,
+          grossAnnualIncome: processLoanApplicationInput.grossAnnualIncome,
+          loanApplicationStatus: 'APPROVED',
+          monthlyExpenses: processLoanApplicationInput.monthlyExpenses,
+          timestamp: mockedTimestamp,
+        });
+      });
+      // ...
+     });
+    // ...
+  });
+});
+```
+
+Next, write a failing test.
+
+<details>
+  <summary>Hint</summary>
+  Use the <code>expect.any(String)</code> when asserting against the <code>loanApplicationId</code>.
+</details>
+
+<details>
+  <summary>Hint</summary>
+  We know the value of the <code>timestamp</code> as we have already mocked the system time.
+</details>
+
+
+<details>
+  <summary>Solution</summary>
+
+```typescript title="backend/src/use-cases/loan-assessment/process-loan-application.spec.ts"
+// ...
+describe('process loan-application', () => {
+  // ...
+  describe('given a borrower email, gross annual income, employment status and monthly expenses', () => {
+    // ...
+     describe('given the borrower profile is successfully retrieved', () => {
+       it('writes the loan application to the database', async () => {
+        // highlight-start
+        await processLoanApplication(processLoanApplicationInput);
+        expect(putLoanApplicationSpy).toHaveBeenCalledWith({
+          loanApplicationId: expect.any(String),
+          borrowerEmail: processLoanApplicationInput.borrowerEmail,
+          creditScore: borrowerProfile.creditScore,
+          employmentStatus: processLoanApplicationInput.employmentStatus,
+          grossAnnualIncome: processLoanApplicationInput.grossAnnualIncome,
+          loanApplicationStatus: 'APPROVED',
+          monthlyExpenses: processLoanApplicationInput.monthlyExpenses,
+          timestamp: mockedTimestamp,
+        });
+        // highlight-end
+      });
+      // ...
+     });
+    // ...
+  });
+});
+```
+
+</details>
+
+### Start the test watcher
+
+If your tests are not running, issue the following command:
+
+```shell
+pnpm run test
+```
+
+You should see a failing test case, similar to the following:
+
+![5th Failing `Apply for Loan` unit test](/img/loan-application/failing-apply-for-loan-unit-test-5.png)
+
+### Make the failing unit test pass
+
+Navigate to `backend/src/adaptors/secondary/ddb-put-loan-application.ts`.
+
+Next, make this test pass.
+
+The `putLoanApplicationFunction` function should be used to persist the loan application. Use the `node:crypto` module to generate a V4 UUID.
+
+
+<details>
+  <summary>Solution</summary>
+
+```typescript title="backend/src/use-cases/loan-assessment/process-loan-application.ts"
+import { getBorrowerProfile } from '@/adaptors/secondary/ddb-get-borrower-profile';
+  import { putLoanApplication } from '@/adaptors/secondary/ddb-put-loan-application';
+  import { BorrowerProfileDoesNotExistError } from '@/errors/BorrowerProfileDoesNotExistError';
+  import { ProcessLoanApplicationPort } from '@/ports/primary/ProcessLoanApplication';
+  import { getYearsSinceCurrentDate } from '@/utils/get-years-since-current-date';
+  import { randomUUID } from 'crypto';
+  import { assessLoanApplication } from './assess-loan-application';
+  
+  const calculateAge = (dateOfBirth: Date): number => 
+  getYearsSinceCurrentDate(dateOfBirth);
+  export const processLoanApplication: ProcessLoanApplicationPort = async ({
+    borrowerEmail,
+    grossAnnualIncome,
+    employmentStatus,
+    monthlyExpenses,
+  }) => { 
+    const borrowerProfile = await getBorrowerProfile(borrowerEmail);
+    if (!borrowerProfile) {
+      throw new BorrowerProfileDoesNotExistError('Borrower profile not found');
+    }
+    const { creditScore, dob } = borrowerProfile;
+    const loanApplicationStatus = assessLoanApplication({
+      grossAnnualIncome,
+      employmentStatus,
+      monthlyExpenses,
+      creditScore,
+      age: calculateAge(new Date(dob)),
+    });
+    //highlight-start
+    await putLoanApplication({
+      borrowerEmail,
+      loanApplicationId: randomUUID(),
+      timestamp: new Date().toISOString(),
+      creditScore,
+      grossAnnualIncome,
+      monthlyExpenses,
+      loanApplicationStatus,
+      employmentStatus,
+    });
+    //highlight-end
+  }
+```
+
+</details>
+
+
+## Verify Loan Application Status Is Returned
+
+Unskip the next test case. Remove the `.todo`: `it.todo(...)` --> `it(...)`:
+
+```typescript title="backend/src/use-cases/loan-assessment/process-loan-application.spec.ts"
+// ...
+describe('process loan-application', () => {
+  // ...
+  describe('given a borrower email, gross annual income, employment status and monthly expenses', () => {
+    // ...
+     describe('given the borrower profile is successfully retrieved', () => {
+      // highlight-next-line
+       it('writes the loan application to the database', async () => {        
+      });
+      // ...
+     });
+    // ...
+  });
+});
+```
+
+Next, write a failing test.
+
+
+
+<details>
+  <summary>Solution</summary>
+
+```typescript title="backend/src/use-cases/loan-assessment/process-loan-application.spec.ts"
+// ...
+describe('process loan-application', () => {
+  // ...
+  describe('given a borrower email, gross annual income, employment status and monthly expenses', () => {
+    // ...
+    describe('given the borrower profile is successfully retrieved', () => {
+      describe('given the write to the database succeeds', () => {
+        it('resolves with the loan application status', () => {
+          // highlight-start
+          return expect(
+            processLoanApplication(processLoanApplicationInput)
+          ).resolves.toEqual('APPROVED');
+          // highlight-end
+        });
+      });
+      // ...
+     });
+    // ...
+  });
+});
+```
+
+</details>
+
+### Start the test watcher
+
+If your tests are not running, issue the following command:
+
+```shell
+pnpm run test
+```
+
+You should see a failing test case, similar to the following:
+
+![6th Failing `Apply for Loan` unit test](/img/loan-application/failing-apply-for-loan-unit-test-6.png)
+
+### Make the failing unit test pass
+
+Navigate to `backend/src/adaptors/secondary/ddb-put-loan-application.ts`.
+
+Next, make this test pass.
+
+<details>
+  <summary>Hint</summary>
+  Return the result from the call to `putLoanApplicationFunction`.
+</details>
+
+<details>
+  <summary>Solution</summary>
+
+```typescript title="backend/src/use-cases/loan-assessment/process-loan-application.ts"
+  import { getBorrowerProfile } from '@/adaptors/secondary/ddb-get-borrower-profile';
+  import { putLoanApplication } from '@/adaptors/secondary/ddb-put-loan-application';
+  import { BorrowerProfileDoesNotExistError } from '@/errors/BorrowerProfileDoesNotExistError';
+  import { ProcessLoanApplicationPort } from '@/ports/primary/ProcessLoanApplication';
+  import { getYearsSinceCurrentDate } from '@/utils/get-years-since-current-date';
+  import { randomUUID } from 'crypto';
+  import { assessLoanApplication } from './assess-loan-application';
+  
+  const calculateAge = (dateOfBirth: Date): number => 
+  getYearsSinceCurrentDate(dateOfBirth);
+  export const processLoanApplication: ProcessLoanApplicationPort = async ({
+    borrowerEmail,
+    grossAnnualIncome,
+    employmentStatus,
+    monthlyExpenses,
+  }) => { 
+    const borrowerProfile = await getBorrowerProfile(borrowerEmail);
+    if (!borrowerProfile) {
+      throw new BorrowerProfileDoesNotExistError('Borrower profile not found');
+    }
+    const { creditScore, dob } = borrowerProfile;
+    const loanApplicationStatus = assessLoanApplication({
+      grossAnnualIncome,
+      employmentStatus,
+      monthlyExpenses,
+      creditScore,
+      age: calculateAge(new Date(dob)),
+    });
+    await putLoanApplication({
+      borrowerEmail,
+      loanApplicationId: randomUUID(),
+      timestamp: new Date().toISOString(),
+      creditScore,
+      grossAnnualIncome,
+      monthlyExpenses,
+      loanApplicationStatus,
+      employmentStatus,
+    });
+    //highlight-next-line
+    return loanApplicationStatus;
+  }
+```
+
+</details>
+
+## Handle Internal Error in Loan Application Adapter
+
+Unskip the next test case. Remove the `.todo`: `it.todo(...)` --> `it(...)`:
+
+```typescript title="backend/src/use-cases/loan-assessment/process-loan-application.spec.ts"
+// ...
+describe('process loan-application', () => {
+  // ...
+  describe('given a borrower email, gross annual income, employment status and monthly expenses', () => {
+    // ...
+    describe('given the write to the database rejects', () => {
+      // highlight-next-line
+      it('rejects with the error', () => {
+      });
+    });
+    // ...
+  });
+});
+```
+
+Next, write a failing test.
+
+<details>
+  <summary>Solution</summary>
+
+```typescript title="backend/src/use-cases/loan-assessment/process-loan-application.spec.ts"
+// ...
+describe('process loan-application', () => {
+  // ...
+  describe('given a borrower email, gross annual income, employment status and monthly expenses', () => {
+    // ...
+    describe('given the write to the database rejects', () => {
+      // highlight-next-line
+      it('rejects with the error', () => {
+          const error = new InternalError('Cheers Clint');
+          putLoanApplicationSpy.mockRejectedValue(error);
+          return expect(
+            processLoanApplication(processLoanApplicationInput)
+          ).rejects.toBe(error);
+      });
+    });
+    // ...
+  });
+});
+```
+
+</details>
+
+### Start the test watcher
+
+If your tests are not running, issue the following command:
+
+```shell
+pnpm run test
+```
+
+You should see a passing test case, similar to the following:
+
+![7th Passing `Apply for Loan` unit test](/img/loan-application/passing-apply-for-loan-unit-test-7.png)
+
+>Note: The reason this test passes without any change required is because the secondary adapter (specification: `ddb-put-loan-application.spec.ts`) already throws an `InternalError` if a loan application cannot be persisted.

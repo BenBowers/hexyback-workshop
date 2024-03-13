@@ -1,0 +1,22 @@
+---
+sidebar_position: 2
+tags:
+  - borrower-profile table-design
+---
+
+# Table Design
+
+## Attributes
+
+| Name                           | Type   | Example                                                                                                | Description                                                                                                                   |
+|--------------------------------|--------|--------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| pk                             | string | john.doe@example.com                                                                                   | Primary Key: The borrower's email address                                                                                     |
+| sk                             | string | BORROWING_CAPACITY_CALCULATION#2dd0ce10-4d28-4275-af31-b2e5edc7430a#TIMESTAMP#2024-03-15T00:00:00.000Z | Sort Key: The entity type ('BORROWING_CAPACITY_CALCULATION'),  borrowingCapacityCalculationId and timestamp separated by '#'  |
+| estimatedBorrowingCapacity     | number | 100000                                                                                                 | The borrower's borrowing capacity. This is a number >= 0                                                                      |
+| grossAnnualIncome              | number | 40000                                                                                                  | The borrower's gross annual income. This is a number >= 0                                                                     |
+| employmentStatus               | string | 'FULL_TIME'                                                                                            | The borrower's employment status. One of 'FULL_TIME', 'PART_TIME', 'CASUAL', 'SELF_EMPLOYED'                                  |
+| borrowingCapacityCalculationId | string | '2dd0ce10-4d28-4275-af31-b2e5edc7430a'                                                                 | A randomly generated V4 UUID                                                                                                  |
+| timestamp                      | string | '2024-03-15T00:00:00.000Z`                                                                             | The time of calculation of the borrowing capacity. This is an ISO8061 date and time in UTC.                                   |
+
+
+![Borrower Profile - Table Design](/img/borrowing-capacity/table-desgin-borrowing-capacity-and-borrower-profile.png)

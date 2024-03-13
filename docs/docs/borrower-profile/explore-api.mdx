@@ -1,0 +1,67 @@
+---
+sidebar_position: 1
+tags:
+  - explore-borrower-profile-api
+---
+
+# Explore Borrower API
+
+1. In your browser, navigate to the `Create a Borrower` API documentation:
+
+    ```text
+    http://localhost:3000/docs/hexy/create-a-borrower
+    ```
+
+2. Modify the sample request body:
+
+  ```json
+  { 
+    "name": "ben",
+    "email": "ben.bowers@journeyone.com",
+    "dob": "1999-01-01",
+    "creditScore": 500
+  }
+  ```
+3. Copy the `curl` request, replacing `http://localhost:3000` with the URL of your deployed API endpoint - `apiEndpoint`:
+
+  ```shell
+  ✔  Deployed:
+   ConfigStack
+   # Use the URL shown below
+   apiEndpoint: https://xxxxxxx.execute-api.ap-southeast-2.amazonaws.com/prod/ 
+  ```
+
+4. Paste the `curl` request into your terminal and hit `Enter`:
+
+  ```shell
+  curl -L -X POST 'https://xxxxxxx.execute-api.ap-southeast-2.amazonaws.com/prod/borrower' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
+  --data-raw '{
+    "name": "ben",
+    "email": "ben.bowers@journeyone.com",
+    "dob": "1999-01-01",
+    "creditScore": 500
+  }'
+  ```
+
+5. Navigate to the AWS Lambda console and select the `CreateBorrowerProfile` lambda
+
+  ![Select `CreateBorrowerProfile` lambda on AWS Lambda console](/img/borrower/select-create-borrower-profile-lambda-aws-console.png)
+
+6. Navigate to the `Monitor` tab:
+
+  ![Navigate to the `Monitor` tab for the `CreateBorrowerProfile` lambda](/img/borrower/navigate-to-monitor-tab-for-create-borrower-profile-lambda.png)
+
+7. Click on the first entry in the `Traces` tab:
+
+  ![Navigate to the `Traces` tab for the `CreateBorrowerProfile` lambda](/img/borrower/navigate-to-traces-tab-for-create-borrower-profile-lambda.png)
+
+  Observe the traces shown. You'll notice two calls:
+    - A call to (attempt) to get the borrower profile
+    - A call to put the borrower profile 
+
+## Exercise:
+
+1. Attempt to create the same borrower. What happens? Observe the traces to confirm your assumptions.
+

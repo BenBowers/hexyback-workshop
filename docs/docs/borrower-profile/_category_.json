@@ -1,0 +1,10 @@
+{
+  "position": 7,
+  "label": "Borrower Profile",
+  "collapsible": true,
+  "collapsed": false,
+  "link": {
+    "type": "generated-index",
+    "title": "Borrowing Capacity"
+  }
+}

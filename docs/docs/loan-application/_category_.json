@@ -1,0 +1,10 @@
+{
+  "position": 9,
+  "label": "Loan Application",
+  "collapsible": true,
+  "collapsed": false,
+  "link": {
+    "type": "generated-index",
+    "title": "Loan Application"
+  }
+}

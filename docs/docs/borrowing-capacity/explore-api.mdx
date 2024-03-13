@@ -1,0 +1,55 @@
+---
+sidebar_position: 1
+tags:
+  - borrowing-capacity overview
+---
+
+# Explore Borrowing Capacity API
+
+1. In your browser, navigate to the `Borrowing Capacity` API documentation:
+
+    ```text
+    http://localhost:3000/docs/hexy/get-an-estimate-of-your-borrowing-capacity
+    ```
+
+2. Modify the sample request parameters:
+
+  ![Modify sample request parameters](/img/borrowing-capacity/modify-request-parameters.png)
+
+
+3. Copy the `curl` request, replacing `http://localhost:3000` with the URL of your deployed API endpoint - `apiEndpoint`:
+
+  ```shell
+  ✔  Deployed:
+   ConfigStack
+   # Use the URL shown below
+   apiEndpoint: https://xxxxxxx.execute-api.ap-southeast-2.amazonaws.com/prod/ 
+  ```
+
+4. Paste the `curl` request into your terminal and hit `Enter`:
+
+  ```shell
+  curl -L -X GET 'https://xxxxxxx.execute-api.ap-southeast-2.amazonaws.com/prod/borrowingCapacity?borrowerEmail=rami@rolo.polo&grossAnnualIncome=50000&employmentStatus=SELF_EMPLOYED' \
+  -H 'Accept: application/json'
+  ```
+
+5. Navigate to the AWS Lambda console and select the `CalculateBorrowingCapacity` lambda
+
+  ![Select `CalculateBorrowingCapacity` lambda on AWS Lambda console](/img/borrowing-capacity/select-calculate-borrowing-capacity-lambda-aws-console.png)
+
+6. Navigate to the `Monitor` tab:
+
+  ![Navigate to the `Monitor` tab for the `CalculateBorrowingCapacity` lambda](/img/borrowing-capacity/navigate-to-monitor-tab-for-calculate-borrowing-capacity-lambda.png)
+
+7. Click on the first entry in the `Traces` tab:
+
+  ![Navigate to the `Traces` tab for the `CalculateBorrowingCapacity` lambda](/img/borrowing-capacity/navigate-to-traces-tab-for-calculate-borrowing-power-lambda.png)
+
+  Observe the traces shown. You'll notice two calls:
+    - A call to (attempt) to get the borrower profile
+    - A call to put the borrowing capacity calculation 
+
+## Exercise:
+
+1. Attempt to calculate the borrowing capacity for a borrower that does not exist. What happens? Observe the traces to confirm your assumptions.
+
