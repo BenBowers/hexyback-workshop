@@ -4,7 +4,7 @@
 
 [Hexyback Workshop Documentation](https://benbowers.github.io/hexyback-workshop/)
 
-## About ℹ️
+## About
 
 This educational journey is designed for enthusiastic learners like you, aiming to demystify the complexities of cloud technology and application architecture.
 

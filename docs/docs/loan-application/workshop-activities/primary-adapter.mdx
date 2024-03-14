@@ -6,14 +6,13 @@ tags:
 
 # Primary Adapter
 
-## Scenario 1
+## Verify Use Case Called With `LoanApplicationInput`
 
 The primary adapter is reponsible for converting API Gateway Events into requests that can be processed by our use cases. To do this, we'll need to extract and deserialize the body of the API Gateway Event.
 
 The API Gateway is also responsible for validating the request payload. We can therefore assume that the deserialized request body is a valid instance of `ProcessLoanApplicationInput` (define here: `backend/src/ports/primary/ProcessLoanApplication.ts`).
 
 Unskip the next test case. Remove the `.todo`: `it.todo(...)` --> `it(...)`:
-
 
 ```typescript title="backend/src/adaptors/primary/api-gw-apply-for-loan.spec.ts"
 // ...
@@ -58,7 +57,6 @@ You should see a failing test case, similar to the following:
 
 ![Failing `API Gateway Apply for Loan` unit test](/img/loan-application/failing-api-gw-apply-for-loan-test.png)
 
-
 Next, make the test pass.
 
 <details>
@@ -77,22 +75,20 @@ export const lambdaHandler: APIGatewayProxyHandler = async (
     const loanApplicationStatus = await processLoanApplication(loanApplication);
   };
   // highlight-end
-  
 };
 
 export const handler = middy(lambdaHandler)
   .use(captureLambdaHandler(tracer))
   .use(injectLambdaContext(logger));
-
 ```
 
 </details>
 
+## Successful Loan Application (201)
 
-## Scenario 2
+The primary adapter is also responsible for returning a HTTP status code and the body of the request, serialized in JSON.
 
 Unskip the next test case. Remove the `.todo`: `it.todo(...)` --> `it(...)`:
-
 
 ```typescript title="backend/src/adaptors/primary/api-gw-apply-for-loan.spec.ts"
 // ...
@@ -139,7 +135,6 @@ You should see a failing test case, similar to the following:
 
 ![Second Failing `API Gateway Apply for Loan` unit test](/img/loan-application/failing-api-gw-apply-for-loan-test-2.png)
 
-
 Next, make the test pass.
 
 <details>
@@ -162,7 +157,6 @@ export const lambdaHandler: APIGatewayProxyHandler = async (
     };
     // highlight-end
   };
-  
 };
 
 export const handler = middy(lambdaHandler)
@@ -172,10 +166,11 @@ export const handler = middy(lambdaHandler)
 
 </details>
 
-## Scenario 3
+## Borrower Does Not Exist (400)
 
+The primary adapter should catch the `BorrowerProfileDoesNotExistError` and return a HTTP status code of 400 and
+a message of "Borrower with the provided email does not exist".
 Unskip the next test case. Remove the `.todo`: `it.todo(...)` --> `it(...)`:
-
 
 ```typescript title="backend/src/adaptors/primary/api-gw-apply-for-loan.spec.ts"
 // ...
@@ -189,8 +184,10 @@ describe('api gw apply for loan', () => {
     // ...
     describe('given the use case rejects with borrower profile does not exist', () => {
       // highlight-next-line
-      it.todo('resolves with a status code 400 and a message containing borrower with the provided email does not exist', async () => {
-      });
+      it.todo(
+        'resolves with a status code 400 and a message containing borrower with the provided email does not exist',
+        async () => {}
+      );
     });
     // ...
   });
@@ -253,7 +250,6 @@ You should see a failing test case, similar to the following:
 
 ![Second Failing `API Gateway Apply for Loan` unit test](/img/loan-application/failing-api-gw-apply-for-loan-test-3.png)
 
-
 Next, make the test pass.
 
 <details>
@@ -267,27 +263,27 @@ export const lambdaHandler: APIGatewayProxyHandler = async (
   export const lambdaHandler: APIGatewayProxyHandler = async (
     event: APIGatewayProxyEvent
   ) => {
-      // highilght-next-line
-      try {
-        const {
-          grossAnnualIncome,
-          employmentStatus,
-          monthlyExpenses,
-          borrowerEmail,
-        } = JSON.parse(event.body!) as LoanApplication;
-        const loanApplicationStatus = await processLoanApplication({
-          grossAnnualIncome,
-          employmentStatus,
-          monthlyExpenses,
-          borrowerEmail,
-        });
-        return {
-          statusCode: 201,
-          body: JSON.stringify({
-            loanApplicationStatus,
-          } as ApplyForLoanResponse),
-        };
-    // highilght-start
+    // highilght-next-line
+    try {
+      const {
+        grossAnnualIncome,
+        employmentStatus,
+        monthlyExpenses,
+        borrowerEmail,
+      } = JSON.parse(event.body!) as LoanApplication;
+      const loanApplicationStatus = await processLoanApplication({
+        grossAnnualIncome,
+        employmentStatus,
+        monthlyExpenses,
+        borrowerEmail,
+      });
+      return {
+        statusCode: 201,
+        body: JSON.stringify({
+          loanApplicationStatus,
+        } as ApplyForLoanResponse),
+      };
+      // highilght-start
     } catch (e) {
       if (e instanceof BorrowerProfileDoesNotExistError) {
         return {
@@ -300,7 +296,6 @@ export const lambdaHandler: APIGatewayProxyHandler = async (
     }
     // highilght-end
   };
-  
 };
 
 export const handler = middy(lambdaHandler)
@@ -310,10 +305,12 @@ export const handler = middy(lambdaHandler)
 
 </details>
 
-## Scenario 4
+## Unhandled Error (500)
+
+Finally when the use case throws an exception we do not want to communicate back to the consumer of the api.
+We want to catch all exceptions and return a HTTP status code of 500 and a message of "Internal Server Error"
 
 Unskip the next test case. Remove the `.todo`: `it.todo(...)` --> `it(...)`:
-
 
 ```typescript title="backend/src/adaptors/primary/api-gw-apply-for-loan.spec.ts"
 // ...
@@ -327,8 +324,10 @@ describe('api gw apply for loan', () => {
     // ...
     describe('given the use case rejects with an internal error', () => {
       // highlight-next-line
-      it.todo('resolves to a status code 500 and a message containing Internal Server Error', async () => {
-      });
+      it.todo(
+        'resolves to a status code 500 and a message containing Internal Server Error',
+        async () => {}
+      );
     });
     // ...
   });
@@ -389,7 +388,6 @@ You should see a failing test case, similar to the following:
 
 ![Second Failing `API Gateway Apply for Loan` unit test](/img/loan-application/failing-api-gw-apply-for-loan-test-4.png)
 
-
 Next, make the test pass.
 
 <details>
@@ -403,26 +401,26 @@ export const lambdaHandler: APIGatewayProxyHandler = async (
   export const lambdaHandler: APIGatewayProxyHandler = async (
     event: APIGatewayProxyEvent
   ) => {
-      // highilght-next-line
-      try {
-        const {
-          grossAnnualIncome,
-          employmentStatus,
-          monthlyExpenses,
-          borrowerEmail,
-        } = JSON.parse(event.body!) as LoanApplication;
-        const loanApplicationStatus = await processLoanApplication({
-          grossAnnualIncome,
-          employmentStatus,
-          monthlyExpenses,
-          borrowerEmail,
-        });
-        return {
-          statusCode: 201,
-          body: JSON.stringify({
-            loanApplicationStatus,
-          } as ApplyForLoanResponse),
-        };
+    // highilght-next-line
+    try {
+      const {
+        grossAnnualIncome,
+        employmentStatus,
+        monthlyExpenses,
+        borrowerEmail,
+      } = JSON.parse(event.body!) as LoanApplication;
+      const loanApplicationStatus = await processLoanApplication({
+        grossAnnualIncome,
+        employmentStatus,
+        monthlyExpenses,
+        borrowerEmail,
+      });
+      return {
+        statusCode: 201,
+        body: JSON.stringify({
+          loanApplicationStatus,
+        } as ApplyForLoanResponse),
+      };
     } catch (e) {
       if (e instanceof BorrowerProfileDoesNotExistError) {
         return {
@@ -442,7 +440,6 @@ export const lambdaHandler: APIGatewayProxyHandler = async (
       // highilght-end
     }
   };
-  
 };
 
 export const handler = middy(lambdaHandler)
