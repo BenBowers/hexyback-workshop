@@ -15,23 +15,25 @@ Before diving into the heart of this workshop, ensure you have the following too
 
 ## Setting Up AWS Access
 
-### Step 1: Access Your AWS Account
+### IAM User (Reccomened for workshop)
+
+#### Step 1: Access Your AWS Account
 
 Navigate to the [AWS Management Console](https://aws.amazon.com/console/) and log in with your credentials.
 
-### Step 2: Establish an IAM User
+#### Step 2: Establish an IAM User
 
 1. Within the AWS Management Console, select **IAM** under Security, Identity, & Compliance from the **Services** dropdown.
 2. Click **Add users** in the IAM dashboard's Users section.
 3. Set your username (e.g., `hexy-workshop-user`) and choose **Programmatic access** to generate an access key ID and secret access key.
 4. Proceed to **Permissions**.
 
-### Step 3: Grant AdministratorAccess
+#### Step 3: Grant AdministratorAccess
 
 1. Select **Attach existing policies directly** and find `AdministratorAccess`.
 2. After selecting the policy, you can optionally add tags before reviewing and confirming the user creation.
 
-### Step 4: Secure Your Credentials
+#### Step 4: Secure Your Credentials
 
 Upon user creation, download and securely store the `.csv` file containing your new credentials—remember, this is your only chance to copy these details.
 

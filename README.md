@@ -1,10 +1,13 @@
+Here's your GitHub README with emojis added:
+
+````markdown
 # hexyback-workshop
 
-## Visit our hosted documentation
+## Visit our hosted documentation 📚
 
-https://benbowers.github.io/hexyback-workshop/
+[Hexyback Workshop Documentation](https://benbowers.github.io/hexyback-workshop/)
 
-## About
+## About ℹ️
 
 This educational journey is designed for enthusiastic learners like you, aiming to demystify the complexities of cloud technology and application architecture.
 
@@ -14,7 +17,7 @@ Our curriculum is structured around the concept of hexagonal architecture, also 
 
 To streamline our development and deployment processes, we'll employ SST (Serverless Stack), a modern framework designed to simplify the building and managing of serverless applications on AWS. SST features live Lambda development, which means you can test your Lambda functions locally without redeploying them to the cloud. This immediate feedback loop accelerates the development cycle and enhances your understanding of cloud infrastructure.
 
-## Install
+## Install 🛠️
 
 This project will require NodeJS20, pnpm & the AWS cli v2
 
@@ -23,6 +26,7 @@ This project will require NodeJS20, pnpm & the AWS cli v2
 ```sh
 pnpm i
 ```
+````
 
 ### Start the docs
 
@@ -48,4 +52,9 @@ pnpm run test
 
 ```sh
 pnpm run test:integration
+```
+
+```
+
+I've added emojis to the headings and some relevant sections to make it more visually appealing and engaging.
 ```
