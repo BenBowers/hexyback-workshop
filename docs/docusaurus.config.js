@@ -77,11 +77,15 @@ const config = {
         style: 'dark',
         links: [
           {
-            title: 'Docs',
+            title: 'Documentation',
             items: [
               {
-                label: 'Tutorial',
+                label: 'Workshop',
                 to: '/docs/intro',
+              },
+              {
+                label: 'Hexy API',
+                to: '/docs/category/hexy-api',
               },
             ],
           },

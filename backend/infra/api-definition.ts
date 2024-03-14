@@ -82,6 +82,7 @@ export const generateApiSpec = ({
   paths: {
     '/borrower': {
       post: {
+        tags: ['Borrower'],
         summary: 'Create a borrower',
         requestBody: {
           required: true,
@@ -159,6 +160,7 @@ export const generateApiSpec = ({
     },
     '/borrowingCapacity': {
       get: {
+        tags: ['Borrowing Capacity'],
         summary: 'Get an estimate of your borrowing capacity',
         parameters: [
           {
@@ -256,6 +258,7 @@ export const generateApiSpec = ({
     },
     '/loan': {
       post: {
+        tags: ['Loan Application'],
         summary: 'Apply for a loan',
         requestBody: {
           required: true,
