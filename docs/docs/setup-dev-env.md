@@ -61,7 +61,7 @@ These credentials should have been obtained when you [created your IAM user prev
 
 1. Access the integrated terminal in your development environment. This is typically done by opening the command palette (usually Ctrl+Shift+P or Cmd+Shift+P on Mac) and selecting `Terminal: Create New Integrated Terminal` or by navigating to the terminal panel in your IDE.
 
-### Step 3: Configure the AWS CLI
+### Step 3a: Configure the AWS CLI (IAM User)
 
 1. In the terminal, type the following command and hit Enter:
 
@@ -81,6 +81,49 @@ These credentials should have been obtained when you [created your IAM user prev
    AWS Secret Access Key [None]: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
    Default region name [None]: ap-southeast-2
    Default output format [None]: json
+   ```
+
+### Step 3b: Configure the AWS CLI (SSO)
+
+1. Run SSO configuration command
+
+   ```bash
+   aws configure sso
+   ```
+
+2. When prompted to enter you session name **Leave Blank** and hit Enter.
+3. Next enter your **SSO start URL** i.e `https://hexy.awsapps.com/start/#/` and hit enter
+4. For the **SSO Region** set `ap-southeast-2`
+5. You will be prompted to open your browser. Log in and confirm the connection
+6. Select your account and role
+7. Set the **CLI default region** to `ap-southeast-2`
+8. Set the **CLI default output format** to `json`
+9. Set the **CLI profile name** to `default` if in the container or set it to a sensible name if running on your machine (You will need to export your profile if not set to default)
+
+   Here's an example of what the prompts might look like
+
+   ```text
+   node ➜ /workspaces/hexyback-workshop/backend (update-sso-instructions) $ aws configure sso
+   SSO session name (Recommended):
+   WARNING: Configuring using legacy format (e.g. without an SSO session).
+   Consider re-running "configure sso" command and providing a session name.
+   SSO start URL [None]: https://<org>.awsapps.com/start/#/
+   SSO region [None]: ap-southeast-2
+   Attempting to automatically open the SSO authorization page in your default browser.
+   If the browser does not open or you wish to use a different device to authorize this request, open the following URL:
+
+   https://device.sso.ap-southeast-2.amazonaws.com/
+
+   Then enter the code:
+
+   XXXX-XXXX
+   There are 85 AWS accounts available to you.
+   Using the account ID 111111111111
+   There are 4 roles available to you.
+   Using the role name "AdministratorAccess"
+   CLI default client Region [None]: ap-southeast-2
+   CLI default output format [None]: json
+   CLI profile name [AdministratorAccess-1111111111]: default
    ```
 
 ### Step 4: Verify Configuration
