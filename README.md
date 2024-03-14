@@ -1,6 +1,3 @@
-Here's your GitHub README with emojis added:
-
-````markdown
 # hexyback-workshop
 
 ## Visit our hosted documentation 📚
@@ -26,7 +23,6 @@ This project will require NodeJS20, pnpm & the AWS cli v2
 ```sh
 pnpm i
 ```
-````
 
 ### Start the docs
 
@@ -52,9 +48,4 @@ pnpm run test
 
 ```sh
 pnpm run test:integration
-```
-
-```
-
-I've added emojis to the headings and some relevant sections to make it more visually appealing and engaging.
 ```
