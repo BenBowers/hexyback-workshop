@@ -7,7 +7,8 @@
     "docs": "turbo @hexy/docs#start",
     "remove": "turbo @hexy/backend#remove",
     "test": "turbo @hexy/backend#test",
-    "test:integration": "turbo @hexy/backend#test:integration"
+    "test:integration": "turbo @hexy/backend#test:integration",
+    "deploy": "turbo @hexy/backend#deploy"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.2",

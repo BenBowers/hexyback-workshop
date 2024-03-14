@@ -3,23 +3,38 @@
   "pipeline": {
     "generate-types": {},
     "@hexy/backend#generate-types": {
-      "outputs": ["openapi/**"],
-      "inputs": ["infra/api-definition.ts", "scripts/generate.ts"]
+      "outputs": [
+        "openapi/**"
+      ],
+      "inputs": [
+        "infra/api-definition.ts",
+        "scripts/generate.ts"
+      ]
     },
-    "deploy": {
+    "@hexy/backend#deploy": {
       "cache": false
     },
     "@hexy/docs#gen-api-docs-all": {
-      "outputs": ["docs/hexy/**"],
-      "inputs": ["docusaurus.config.js"],
-      "dependsOn": ["@hexy/backend#generate-types"]
+      "outputs": [
+        "docs/hexy/**"
+      ],
+      "inputs": [
+        "docusaurus.config.js"
+      ],
+      "dependsOn": [
+        "@hexy/backend#generate-types"
+      ]
     },
     "@hexy/docs#start": {
       "cache": false,
-      "dependsOn": ["@hexy/docs#gen-api-docs-all"]
+      "dependsOn": [
+        "@hexy/docs#gen-api-docs-all"
+      ]
     },
     "@hexy/docs#build": {
-      "dependsOn": ["@hexy/docs#gen-api-docs-all"]
+      "dependsOn": [
+        "@hexy/docs#gen-api-docs-all"
+      ]
     },
     "@hexy/backend#test": {
       "cache": false
@@ -31,14 +46,22 @@
       "cache": false
     },
     "typecheck": {
-      "dependsOn": ["generate-types"]
+      "dependsOn": [
+        "generate-types"
+      ]
     },
     "lint": {
-      "dependsOn": ["generate-types"]
+      "dependsOn": [
+        "generate-types"
+      ]
     },
     "test-ci": {},
     "ci": {
-      "dependsOn": ["typecheck", "lint", "test-ci"]
+      "dependsOn": [
+        "typecheck",
+        "lint",
+        "test-ci"
+      ]
     }
   }
 }
