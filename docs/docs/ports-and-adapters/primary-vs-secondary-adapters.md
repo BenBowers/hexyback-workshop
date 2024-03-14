@@ -35,4 +35,4 @@ The primary distinction between the two lies in their roles relative to the appl
 
 This separation supports the hexagonal architecture's goal of creating a loosely coupled, easily testable, and maintainable system.
 
-Next, let's explore the benefits of hexagonal architectures through a detailed example centered around lodging an insurance claim.
+Next, let's explore the benefits of hexagonal architectures.
