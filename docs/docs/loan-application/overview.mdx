@@ -6,7 +6,26 @@ tags:
 
 # Overview
 
-## Applying for a Loan
+## Stories
+
+## Create a profile
+
+```mermaid
+timeline
+  Collect Borrower Details: D.O.B, Name, Credit Score, Email Address
+  Create Borrower Profile: Borrower Profile Persisted
+```
+
+## Apply for a loan
+
+```mermaid
+timeline
+    Get Borrower Profile : Look up Borrower Profile w/ Email Address
+    Collect Additional Information: Employment Status, Gross Annual Income, Monthly Expenses   
+    Calculate Borrower's Age: Use D.O.B. from Borrower's profile.
+    Asses Loan Application: Uses Age,Employment Status, Gross Annual Income, Monthly E
+    Create Loan Application: Loan Application Persisted
+```
 
 1. User initiates a request to apply for a loan through a client application.
 2. The request is received by the primary adaptor: `api-gw-apply-for-loan`.

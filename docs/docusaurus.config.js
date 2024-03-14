@@ -89,7 +89,15 @@ const config = {
             title: 'Community',
             items: [
               {
-                label: 'LinkedIn',
+                label: 'Rami Ruhayel LinkedIn',
+                href: 'https://www.linkedin.com/in/ruhayel/',
+              },
+              {
+                label: 'Ben Bowers LinkedIn',
+                href: 'https://www.linkedin.com/in/benjamin-bowers/',
+              },
+              {
+                label: 'JourneyOne LinkedIn',
                 href: 'https://www.linkedin.com/company/journey-one/',
               },
             ],
