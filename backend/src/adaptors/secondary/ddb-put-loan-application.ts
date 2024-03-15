@@ -15,30 +15,4 @@ export const putLoanApplication: PutLoanApplicationPort = async ({
   monthlyExpenses,
   loanApplicationStatus,
   employmentStatus,
-}) => {
-  try {
-    Log.info(
-      `Putting loan application ${loanApplicationId} for borrower ${borrowerEmail}`
-    );
-    await dynamoDbClient.send(
-      new PutItemCommand({
-        TableName: Config.FINANCIAL_DATA_TABLE_NAME,
-        Item: marshall({
-          pk: borrowerEmail,
-          sk: `LOAN_APPLICATION#${loanApplicationId}#TIMESTAMP#${timestamp}`,
-          loanApplicationId,
-          timestamp,
-          creditScore,
-          grossAnnualIncome,
-          monthlyExpenses,
-          loanApplicationStatus,
-          employmentStatus,
-        }),
-      })
-    );
-  } catch (e) {
-    throw new InternalError(
-      'Failed to put loan application to financial data table'
-    );
-  }
-};
+}) => {};
