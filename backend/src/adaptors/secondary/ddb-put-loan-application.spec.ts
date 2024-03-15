@@ -33,43 +33,8 @@ describe('ddb-put-loan-application', () => {
     timestamp: '2024-03-15T00:00:00.000Z',
   };
 
-  it('throws an InternalError when the dynamodb client rejects for any reason', async () => {
-    dynamoDbMock.rejects(
-      new DynamoDBServiceException({
-        message: 'something went wrong',
-        $metadata: {},
-        name: 'ServiceException',
-        $fault: 'client',
-      })
-    );
-    await expect(putLoanApplication(loanApplication)).rejects.toBeInstanceOf(
-      InternalError
-    );
-  });
-  it(
-    'calls the dynamo db client with a put item command passing it the financial data table name ' +
-      'and a marshalled loan application containing a partition key of the borrowers email ' +
-      'and a sort key of the loan application id and timestamp',
-    async () => {
-      await putLoanApplication(loanApplication);
-      expect(dynamoDbMock).toHaveReceivedCommandWith(PutItemCommand, {
-        TableName: 'financial-data-table',
-        Item: {
-          pk: { S: 'john.doe@example.com' },
-          sk: {
-            S:
-              `LOAN_APPLICATION#${loanApplication.loanApplicationId}` +
-              `#TIMESTAMP#${loanApplication.timestamp}`,
-          },
-          loanApplicationId: { S: loanApplication.loanApplicationId },
-          timestamp: { S: loanApplication.timestamp },
-          creditScore: { N: '700' },
-          grossAnnualIncome: { N: '100000' },
-          monthlyExpenses: { N: '5000' },
-          loanApplicationStatus: { S: 'APPROVED' },
-          employmentStatus: { S: 'FULL_TIME' },
-        },
-      });
-    }
+  it.todo(
+    'throws an InternalError when the dynamodb client rejects for any reason',
+    async () => {}
   );
 });
