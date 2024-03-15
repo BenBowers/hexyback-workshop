@@ -1,5 +1,9 @@
 # hexyback-workshop
 
+## Link to this Github repository 💻
+
+![Github Reository QR Code](https://github.com/BenBowers/hexyback-workshop/blob/main/hexy-back-github-repository-qr-code.png?raw=true)
+
 ## Visit our hosted documentation 📚
 
 [Hexyback Workshop Documentation](https://benbowers.github.io/hexyback-workshop/)
@@ -17,6 +21,12 @@ To streamline our development and deployment processes, we'll employ SST (Server
 ## Install 🛠️
 
 This project will require NodeJS20, pnpm & the AWS cli v2
+
+### Checkout the workshop branch
+
+```sh
+git checkout workshop-start
+```
 
 ### Install the dependencies
 
