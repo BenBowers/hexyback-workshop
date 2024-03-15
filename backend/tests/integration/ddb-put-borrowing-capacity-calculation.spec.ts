@@ -1,63 +1,12 @@
 import { putBorrowingCapacityCalculation } from '@/adaptors/secondary/ddb-put-borrowing-capacity-calculation';
 import { PutBorrowingCapacityCalculationInput } from '@/ports/secondary/DynamoDBPutBorrowingCapacityCalculation';
-import {
-  DeleteItemCommand,
-  DynamoDBClient,
-  QueryCommand,
-} from '@aws-sdk/client-dynamodb';
-import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { randomUUID } from 'crypto';
-import { Config } from 'sst/node/config';
 import { afterEach, describe, expect, it } from 'vitest';
+import {
+  deleteBorrowingCapacityCalculation,
+  getBorrowingCapacityCalculation,
+} from '../utils/borrowing-capacity-ddb';
 describe('ddb-put-borrowing-capacity-calculation', () => {
-  const financialDataTableName = Config.FINANCIAL_DATA_TABLE_NAME;
-  const client = new DynamoDBClient({});
-  const getBorrowingCapacityCalculation = (
-    email: string,
-    borrowingCapacityCalculationId: string
-  ) =>
-    client
-      .send(
-        new QueryCommand({
-          TableName: financialDataTableName,
-          KeyConditions: {
-            pk: {
-              ComparisonOperator: 'EQ',
-              AttributeValueList: [{ S: email }],
-            },
-            sk: {
-              ComparisonOperator: 'BEGINS_WITH',
-              AttributeValueList: [
-                {
-                  S: `BORROWING_CAPACITY_CALCULATION#${borrowingCapacityCalculationId}`,
-                },
-              ],
-            },
-          },
-        })
-      )
-      .then(({ Items }) => (Items?.length ? unmarshall(Items[0]!) : undefined));
-  const deleteBorrowingCapacityCalculation = (
-    email: string,
-    borrowingCapacityCalculationId: string
-  ) =>
-    getBorrowingCapacityCalculation(email, borrowingCapacityCalculationId).then(
-      async (borrowingCapacityCalculation) => {
-        if (borrowingCapacityCalculation) {
-          await client.send(
-            new DeleteItemCommand({
-              TableName: financialDataTableName,
-              Key: marshall({
-                pk: email,
-                sk:
-                  `BORROWING_CAPACITY_CALCULATION#${borrowingCapacityCalculationId}` +
-                  `#TIMESTAMP#${borrowingCapacityCalculation.timestamp}`,
-              }),
-            })
-          );
-        }
-      }
-    );
   const borrowingCapacityCalculation: PutBorrowingCapacityCalculationInput = {
     borrowingCapacityCalculationId: randomUUID(),
     borrowerEmail: `me+${randomUUID()}@you.com`,

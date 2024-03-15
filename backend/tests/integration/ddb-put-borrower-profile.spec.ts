@@ -1,34 +1,13 @@
 import { putBorrowerProfile } from '@/adaptors/secondary/ddb-put-borrower-profile';
 import { BorrowerProfile } from '@/types/api';
-import {
-  DeleteItemCommand,
-  DynamoDBClient,
-  GetItemCommand,
-} from '@aws-sdk/client-dynamodb';
-import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { randomUUID } from 'crypto';
-import { Config } from 'sst/node/config';
 import { afterEach, describe, expect, it } from 'vitest';
+import {
+  deleteBorrowerProfile,
+  getBorrowerProfile,
+} from '../utils/borrower-profile-ddb';
 
 describe('ddb-put-borrower-profile', () => {
-  const financialDataTableName = Config.FINANCIAL_DATA_TABLE_NAME;
-  const client = new DynamoDBClient({});
-  const getBorrowerProfile = (email: string) =>
-    client
-      .send(
-        new GetItemCommand({
-          TableName: financialDataTableName,
-          Key: marshall({ pk: email, sk: 'BORROWER' }),
-        })
-      )
-      .then(({ Item }) => (Item ? unmarshall(Item) : undefined));
-  const deleteBorrowerProfile = (email: string) =>
-    client.send(
-      new DeleteItemCommand({
-        TableName: financialDataTableName,
-        Key: marshall({ pk: email, sk: 'BORROWER' }),
-      })
-    );
   const borrowerProfile: BorrowerProfile = {
     dob: '1981-11-02',
     creditScore: 500,
