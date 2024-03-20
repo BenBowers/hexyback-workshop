@@ -3,10 +3,22 @@ import {
   aws_iam as iam,
   aws_logs as logs,
 } from 'aws-cdk-lib';
-import { Config, Function, StackContext, Table } from 'sst/constructs';
+import { Config, Function, StackContext, Table,EventBus } from 'sst/constructs';
 import { generateApiSpec } from './api-definition';
 
+
 export function ConfigStack({ stack, app }: StackContext) {
+  new EventBus(stack,'BorrowerProfile', {
+    rules: {
+      createBorrowerProfile: {
+        pattern: {
+          source: ['Event Bridge Client'],
+          detailType: ['Create Borrower Profile Command']
+        }
+      },
+    },
+
+  });
   const financialDataTable = new Table(stack, 'FinancialData', {
     fields: {
       pk: 'string',
