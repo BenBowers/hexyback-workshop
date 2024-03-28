@@ -2,6 +2,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
+    setupFiles: ['./vitest.custom-matchers.ts'],
     globals: true,
     include: ['tests/integration/**/*.spec.ts'],
     testTimeout: 30000,
