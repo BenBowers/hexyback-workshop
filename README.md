@@ -1,5 +1,7 @@
 # hexyback-workshop
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/BenBowers/hexyback-workshop?quickstart=1)
+
 ## Link to this Github repository 💻
 
 ![Github Reository QR Code](https://github.com/BenBowers/hexyback-workshop/blob/main/hexy-back-github-repository-qr-code.png?raw=true)
