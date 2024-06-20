@@ -2,6 +2,10 @@ import 'vitest';
 
 interface CustomMatchers<R = unknown> {
   toBeNumber(): R;
+  toFindDynamoDBItem({
+    pollingIntervalSeconds: number,
+    pollingTimeoutSeconds: number,
+  }): Promise<R>;
 }
 
 declare module 'vitest' {

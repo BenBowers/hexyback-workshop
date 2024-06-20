@@ -1,19 +1,13 @@
 {
   "extends": "@tsconfig/node20/tsconfig.json",
-  "exclude": [
-    "packages"
-  ],
+  "exclude": ["packages"],
   "compilerOptions": {
     "noUncheckedIndexedAccess": true,
     "module": "esnext",
     "moduleResolution": "node",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@openapi": [
-        "./openapi/types"
-      ]
+      "@/*": ["./src/*"],
+      "@openapi": ["./openapi/types"]
     }
-  },
+  }
 }
