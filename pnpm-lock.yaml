@@ -74,6 +74,15 @@ importers:
       '@middy/core':
         specifier: ~3
         version: 3.6.2
+      ajv:
+        specifier: ^8.12.0
+        version: 8.12.0
+      ajv-formats:
+        specifier: ^3.0.1
+        version: 3.0.1(ajv@8.12.0)
+      json-schema-to-ts:
+        specifier: ^3.0.1
+        version: 3.0.1
       openapi-fetch:
         specifier: ^0.9.2
         version: 0.9.2
@@ -7163,6 +7172,17 @@ packages:
     dependencies:
       ajv: 8.12.0
 
+  /ajv-formats@3.0.1(ajv@8.12.0):
+    resolution: {integrity: sha512-8iUql50EUR+uUcdRQ3HDqa6EVyo3docL8g5WJ3FNcWmu62IbkGUue/pEyLBW8VGKKucTPgqeks4fIU1DA4yowQ==}
+    peerDependencies:
+      ajv: ^8.0.0
+    peerDependenciesMeta:
+      ajv:
+        optional: true
+    dependencies:
+      ajv: 8.12.0
+    dev: false
+
   /ajv-keywords@3.5.2(ajv@6.12.6):
     resolution: {integrity: sha512-5p6WTN0DdTGVQk6VjcEju19IgaHudalcfabD7yhDGeA6bcQnmL+CpveLJq/3hvfwd1aof6L386Ougkx6RfyMIQ==}
     peerDependencies:
@@ -11784,6 +11804,14 @@ packages:
       lodash: 4.17.21
     dev: false
 
+  /json-schema-to-ts@3.0.1:
+    resolution: {integrity: sha512-ANphQxnKbzLWPeYDmdoci8C9g9ttpfMx8etTlJJ8UCEmNXH9jxGkn3AAbMe+lR4N5OG/01nYxPrDyugLdsRt+A==}
+    engines: {node: '>=16'}
+    dependencies:
+      '@babel/runtime': 7.24.0
+      ts-algebra: 1.2.2
+    dev: false
+
   /json-schema-traverse@0.4.1:
     resolution: {integrity: sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg==}
 
@@ -15833,6 +15861,10 @@ packages:
 
   /trough@2.2.0:
     resolution: {integrity: sha512-tmMpK00BjZiUyVyvrBK7knerNgmgvcV/KLVyuma/SC+TQN167GrMRciANTz09+k3zW8L8t60jWO1GpfkZdjTaw==}
+    dev: false
+
+  /ts-algebra@1.2.2:
+    resolution: {integrity: sha512-kloPhf1hq3JbCPOTYoOWDKxebWjNb2o/LKnNfkWhxVVisFFmMJPPdJeGoGmM+iRLyoXAR61e08Pb+vUXINg8aA==}
     dev: false
 
   /ts-api-utils@1.2.1(typescript@5.3.3):
