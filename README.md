@@ -4,7 +4,7 @@
 
 ## Link to this Github repository 💻
 
-![Github Reository QR Code](https://github.com/BenBowers/hexyback-workshop/blob/main/hexy-back-github-repository-qr-code.png?raw=true)
+[https://shorturl.at/TzNak](https://shorturl.at/TzNak)
 
 ## Visit our hosted documentation 📚
 
