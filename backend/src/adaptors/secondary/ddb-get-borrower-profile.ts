@@ -1,6 +1,6 @@
 import { BorrowerProfile } from '@/entities/BorrowerProfile';
 import { InternalError } from '@/errors/InternalError';
-import { GetBorrowerProfilePort } from '@/ports/secondary/DynamoBDGetBorrowerProfile';
+import { GetBorrowerProfilePort } from '@/ports/secondary/DynamoDBGetBorrowerProfile';
 import { Log, getTracer } from '@/utils/telemetry';
 import { DynamoDBClient, GetItemCommand } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
