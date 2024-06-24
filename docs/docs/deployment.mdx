@@ -6,19 +6,25 @@ tags:
 
 # Deployment
 
-1. Install dependencies
+## Install dependencies
+
+1. Open a __new__ terminal
+
+2. In the __new__ terminal, run the following:
 
   ```shell
   pnpm i
   ```
 
-2. Change into the `backend` directory
+## Deploy the application
+
+1. In the same terminal, change into the `backend` directory
 
   ```shell
   cd backend
   ```
 
-3. Run the deployment target
+2. Run the deployment target
 
   ```shell
   pnpm run deploy
@@ -27,28 +33,38 @@ tags:
   You'll be prompted to a stage name. Enter your first name and hit `Enter ⏎`:
 
   ```shell
-  > sst deploy
- 
+  pnpm run deploy
+
   Please enter a name you'd like to use for your personal stage. Or hit enter to use node: joe 
   ```
 
-4. Run the unit tests:
+## Run the tests
+
+### Unit tests:
+
+1. Open a __new__ terminal
+
+2. In the __new__ terminal, run the following:
 
   ```shell
   pnpm run test
   ```
 
-5. Exit the running tests (they are being watched) by pressing `q`
+### Integration tests:
 
-6. Run the integration tests:
+1. Open a __new__ terminal
+
+2. In the __new__ terminal, run the following:
 
   ```shell
   pnpm run test:integration
   ```
 
-7. Exit the running tests (they are being watched) by pressing `q`
+## Start the documentation:
 
-8. In a new terminal, run the following
+1. Open a __new__ terminal
+
+2. In the __new__ terminal, run the following:
 
   ```shell
   pnpm run docs

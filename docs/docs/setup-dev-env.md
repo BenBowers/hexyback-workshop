@@ -51,6 +51,12 @@ These credentials should have been obtained when you [created your IAM user prev
    Default output format [None]: json
    ```
 
+6. (Optional) If you credentials inlude an _AWS session token_, you'll need configure your profile to use it. In the same terminal, type the following command and hit Enter:
+
+   ```bash
+   aws configure set aws_session_token AWS_SESSION_TOKEN #Replace AWS_SESSION_TOKEN with the session token from your credentials
+   ```
+
 ### Step 3b: Configure the AWS CLI (SSO)
 
 1. Run SSO configuration command
