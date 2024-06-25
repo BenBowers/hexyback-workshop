@@ -8,24 +8,14 @@ tags:
 
 ## Stories
 
-## Create a profile
+## Create a borrower profile
 
-```mermaid
-timeline
-  Collect Borrower Details: D.O.B, Name, Credit Score, Email Address
-  Create Borrower Profile: Borrower Profile Persisted
-```
+![Create a borrower profile story](/img/borrower/create-borrower-profile-story.svg)
 
 ## Apply for a loan
 
-```mermaid
-timeline
-    Get Borrower Profile : Look up Borrower Profile w/ Email Address
-    Collect Additional Information: Employment Status, Gross Annual Income, Monthly Expenses   
-    Calculate Borrower's Age: Use D.O.B. from Borrower's profile.
-    Asses Loan Application: Uses Age,Employment Status, Gross Annual Income, Monthly E
-    Create Loan Application: Loan Application Persisted
-```
+![Apply for a loan story](/img/loan-application/apply-for-loan-story.svg)
+
 
 1. User initiates a request to apply for a loan through a client application.
 2. The request is received by the primary adaptor: `api-gw-apply-for-loan`.
@@ -124,7 +114,7 @@ sequenceDiagram
     ApplyForLoanUseCase-->>ApplyForLoanUseCase: Assess Loan Application 
     ApplyForLoanUseCase->>+PutLoanApplicationSecondaryAdaptor: Put Loan Application 
     PutLoanApplicationSecondaryAdaptor-->>-ApplyForLoanUseCase: throws InternalError
-    ApplyForLoanUseCase-->>-PrimaryAdaptor: throws InternalServerError
+    ApplyForLoanUseCase-->>-PrimaryAdaptor: throws InternalError
     PrimaryAdaptor-->>-User: {statusCode: 500, message: Internal Server Error}
 ```
 
@@ -142,6 +132,6 @@ sequenceDiagram
     PrimaryAdaptor->>+ApplyForLoanUseCase: Validate & Forward Request
     ApplyForLoanUseCase->>+GetBorrowerProfileSecondaryAdapter: Get Borrower Profile 
     GetBorrowerProfileSecondaryAdapter-->>-ApplyForLoanUseCase: throws BorrowerProfileDoesNotExistError
-    ApplyForLoanUseCase-->>-PrimaryAdaptor: throws InternalServerError
+    ApplyForLoanUseCase-->>-PrimaryAdaptor: throws InternalError
     PrimaryAdaptor-->>-User: {statusCode: 400, message: 'Borrower with the provided email does not exist'}
 ```
