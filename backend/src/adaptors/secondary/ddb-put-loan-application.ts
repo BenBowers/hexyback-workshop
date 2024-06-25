@@ -15,6 +15,7 @@ export const putLoanApplication: PutLoanApplicationPort = async ({
   monthlyExpenses,
   loanApplicationStatus,
   employmentStatus,
+<<<<<<< HEAD
 }) => {
   try {
     await dynamoDbClient.send(
@@ -40,3 +41,6 @@ export const putLoanApplication: PutLoanApplicationPort = async ({
     );
   }
 };
+=======
+}) => {};
+>>>>>>> b68768227ce2f955339505e0860db375d7e59eb0

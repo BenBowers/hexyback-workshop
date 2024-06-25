@@ -14,6 +14,7 @@ export const processLoanApplication: ProcessLoanApplicationPort = async ({
   grossAnnualIncome,
   employmentStatus,
   monthlyExpenses,
+<<<<<<< HEAD
 }) => {
   const borrowerProfile = await getBorrowerProfile(borrowerEmail);
   if (!borrowerProfile) {
@@ -39,3 +40,6 @@ export const processLoanApplication: ProcessLoanApplicationPort = async ({
     });
     return loanApplicationStatus;
 };
+=======
+}) => {};
+>>>>>>> b68768227ce2f955339505e0860db375d7e59eb0

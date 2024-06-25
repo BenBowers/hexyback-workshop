@@ -69,10 +69,11 @@ describe('ddb-put-loan-application', () => {
       loanApplication.loanApplicationId
     );
   });
-  it(
+  it.todo(
     'writes a loan application record with ' +
       'PK of email and SK of LOAN_APPLICATION#loanApplicationId#TIMESTAMP#timestamp ' +
       'given a valid loan application',
+<<<<<<< HEAD
     async () => {
       await putLoanApplication(loanApplication);
       await expect(
@@ -94,5 +95,8 @@ describe('ddb-put-loan-application', () => {
         employmentStatus: loanApplication.employmentStatus,
       });
     }
+=======
+    async () => {}
+>>>>>>> b68768227ce2f955339505e0860db375d7e59eb0
   );
 });

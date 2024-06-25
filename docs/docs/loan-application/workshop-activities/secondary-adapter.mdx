@@ -220,6 +220,7 @@ describe('ddb-put-loan-application', () => {
         sk:
           `LOAN_APPLICATION#${loanApplication.loanApplicationId}` +
           `#TIMESTAMP#${loanApplication.timestamp}`,
+        borrowerEmail: loanApplication.borrowerEmail,
         loanApplicationId: loanApplication.loanApplicationId,
         timestamp: loanApplication.timestamp,
         creditScore: loanApplication.creditScore,
@@ -290,6 +291,7 @@ export const putLoanApplication: PutLoanApplicationPort = async ({
       Item: marshall({
         pk: borrowerEmail,
         sk: `LOAN_APPLICATION#${loanApplicationId}#TIMESTAMP#${timestamp}`,
+        borrowerEmail,
         loanApplicationId,
         timestamp,
         creditScore,

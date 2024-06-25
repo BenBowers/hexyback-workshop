@@ -33,6 +33,7 @@ describe('ddb-put-loan-application', () => {
     timestamp: '2024-03-15T00:00:00.000Z',
   };
 
+<<<<<<< HEAD
   it('throws an InternalError when the dynamodb client rejects for any reason', async () => {
     dynamoDbMock.rejects(
       new DynamoDBServiceException({
@@ -46,4 +47,10 @@ describe('ddb-put-loan-application', () => {
       InternalError
     );
   });
+=======
+  it.todo(
+    'throws an InternalError when the dynamodb client rejects for any reason',
+    async () => {}
+  );
+>>>>>>> b68768227ce2f955339505e0860db375d7e59eb0
 });

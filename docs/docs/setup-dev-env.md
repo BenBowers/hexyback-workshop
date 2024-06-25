@@ -6,43 +6,11 @@ tags:
 
 # Development Environment
 
-## Check out the workshop repository
+## Github Codespaces
 
-1. Change into your workspace directory:
+We recommend that you run the workshop on GitHub Codespaces. If you haven't done so already, open the workshop on GitHub Codespaces:
 
-   ```sh
-   cd /path/to/your/workspace
-   ```
-
-2. Clone the [hexyback-workshop](https://github.com/BenBowers/hexyback-workshop) repository.
-
-   ```sh
-   # Using HTTPS
-   git clone https://github.com/BenBowers/hexyback-workshop.git
-   ```
-
-   ```sh
-   # Using SSH
-   git clone git@github.com:BenBowers/hexyback-workshop.git
-   ```
-
-3. Change into the `hexyback-workshop` directory
-
-   ```sh
-   cd hexyback-workshop
-   ```
-
-4. Open the `hexyback-workshop` folder in VS Code
-
-   ```sh
-   code .
-   ```
-
-5. Start the Development Container
-
-   Run the `Dev Containers: Reopen in Container` command from the Command Palette (`F1`) or quick actions Status bar item (click the green button in the bottom left corner of VS Code)
-
-   ![Start Development Container in VS Code](/img/remote-status-bar.png)
+- [![Open the project in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/BenBowers/hexyback-workshop?quickstart=1)
 
 ## Configuring the AWS CLI with IAM Credentials
 
@@ -81,6 +49,12 @@ These credentials should have been obtained when you [created your IAM user prev
    AWS Secret Access Key [None]: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
    Default region name [None]: ap-southeast-2
    Default output format [None]: json
+   ```
+
+6. (Optional) If you credentials inlude an _AWS session token_, you'll need configure your profile to use it. In the same terminal, type the following command and hit Enter:
+
+   ```bash
+   aws configure set aws_session_token AWS_SESSION_TOKEN #Replace AWS_SESSION_TOKEN with the session token from your credentials
    ```
 
 ### Step 3b: Configure the AWS CLI (SSO)
@@ -135,3 +109,43 @@ aws s3 ls
 ```
 
 If the AWS CLI is configured correctly, you should see a list of S3 buckets in your account (or an empty list if no buckets have been created). If you receive an error, verify that you entered your credentials and settings correctly in the previous steps.
+
+## Running the Application 🛠️
+
+### Checkout the workshop branch
+
+```sh
+git checkout workshop-start
+```
+
+### Install the dependencies
+
+```sh
+pnpm i
+```
+
+### Start the docs
+
+```sh
+pnpm run docs
+```
+
+### Deploy the application
+
+```sh
+pnpm run deploy
+```
+
+### Run the tests
+
+#### Unit
+
+```sh
+pnpm run test
+```
+
+#### Integration
+
+```sh
+pnpm run test:integration
+```

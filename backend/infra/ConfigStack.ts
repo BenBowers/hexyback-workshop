@@ -41,6 +41,7 @@ export function ConfigStack({ stack, app }: StackContext) {
       permissions: [[financialDataTable.cdk.table, 'grantReadWriteData']],
     }
   );
+<<<<<<< HEAD
 
   const applyForLoanHandler = new Function(stack, 'applyForLoanHandlerLambda', {
     handler: 'src/adaptors/primary/api-gw-apply-for-loan.handler',
@@ -48,6 +49,8 @@ export function ConfigStack({ stack, app }: StackContext) {
     bind: [FINANCIAL_DATA_TABLE_NAME],
     permissions: [[financialDataTable.cdk.table, 'grantReadWriteData']],
   });
+=======
+>>>>>>> b68768227ce2f955339505e0860db375d7e59eb0
 
   const createBorrowerProfileHandler = new Function(
     stack,
@@ -85,7 +88,6 @@ export function ConfigStack({ stack, app }: StackContext) {
       generateApiSpec({
         calculateBorrowingCapacityHandlerArn:
           calculateBorrowingCapacityHandler.functionArn,
-        applyForLoanHandlerArn: applyForLoanHandler.functionArn,
         createBorrowerProfileHandlerArn:
           createBorrowerProfileHandler.functionArn,
       })
@@ -117,19 +119,7 @@ export function ConfigStack({ stack, app }: StackContext) {
       },
     })
   );
-  applyForLoanHandler.grantInvoke(
-    new iam.ServicePrincipal('apigateway.amazonaws.com', {
-      conditions: {
-        ArnLike: {
-          'aws:SourceArn': api.arnForExecuteApi(
-            'POST',
-            '/loan',
-            api.deploymentStage.stageName
-          ),
-        },
-      },
-    })
-  );
+
   Config.Parameter.create(stack, {
     API_ENDPOINT: api.url,
   });

@@ -15,6 +15,7 @@ export const generateApiSpec = ({
   },
   components: {
     schemas: {
+<<<<<<< HEAD
       LoanApplicationStatus: {
         type: 'string',
         enum: ['APPROVED', 'REJECTED', 'REVIEW'],
@@ -42,6 +43,8 @@ export const generateApiSpec = ({
           },
         },
       },
+=======
+>>>>>>> b68768227ce2f955339505e0860db375d7e59eb0
       EmploymentStatus: {
         type: 'string',
         enum: ['CASUAL', 'FULL_TIME', 'PART_TIME', 'SELF_EMPLOYED'],

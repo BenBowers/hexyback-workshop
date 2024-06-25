@@ -67,35 +67,18 @@ describe.concurrent('api-aw-apply-for-loan', () => {
   const apiClient = openApiFetch<paths>({
     baseUrl: baseUrl,
   });
-  it('responds with a 400 Bad Request given the user does not provide the required request body', async ({
-    expect,
-  }) => {
-    await expect(
-      apiClient.POST('/loan', {
-        body: {} as unknown as ApplyForLoanRequestBody,
-      })
-    ).resolves.toEqual({
-      error: {
-        message: 'Invalid request body',
-      },
-      response: expect.objectContaining({
-        status: 400,
-        statusText: 'Bad Request',
-      }),
-    });
-  });
-  it('response with a 400 Bad Request given the user provides the required request body but the borrower profile does not exist', async ({
-    expect,
-  }) => {
-    const borrowerEmail = `loan-application+${randomUUID()}@example.com`;
-    await expect(
-      apiClient.POST('/loan', {
-        body: {
-          borrowerEmail: borrowerEmail,
-          grossAnnualIncome: 100_000,
-          employmentStatus: 'FULL_TIME',
-          monthlyExpenses: 1000,
+  it.todo(
+    'responds with a 400 Bad Request given the user does not provide the required request body',
+    async ({ expect }) => {
+      await expect(
+        apiClient.POST('/loan', {
+          body: {} as unknown as ApplyForLoanRequestBody,
+        })
+      ).resolves.toEqual({
+        error: {
+          message: 'Invalid request body',
         },
+<<<<<<< HEAD
       })
     ).resolves.toEqual({
       error: {
@@ -149,3 +132,21 @@ describe.concurrent('api-aw-apply-for-loan', () => {
     ]);
   });
 });
+=======
+        response: expect.objectContaining({
+          status: 400,
+          statusText: 'Bad Request',
+        }),
+      });
+    }
+  );
+  it.todo(
+    'response with a 400 Bad Request given the user provides the required request body but the borrower profile does not exist',
+    async ({ expect }) => {}
+  );
+  it.todo(
+    'responds with a 201 Submitted with the loan application status given the user provides the required request body when the borrower profile exists',
+    async ({ expect }) => {}
+  );
+});
+>>>>>>> b68768227ce2f955339505e0860db375d7e59eb0

@@ -1,10 +1,10 @@
 ---
-sidebar_position: 3
+sidebar_position: 1
 tags:
   - borrowing-capacity overview
 ---
 
-# Borrowing Capacity
+# Overview
 
 ![Calculate Borrower's Borrowing Capacity](/img/borrowing-capacity/calculate-borrowers-borrowing-capacity.svg)
 
@@ -111,7 +111,7 @@ sequenceDiagram
     CalculateBorrowingCapacityUseCase-->>CalculateBorrowingCapacityUseCase: Calculate Borrowing Capacity
     CalculateBorrowingCapacityUseCase->>+PutBorrowingCapacityCalculationSecondaryAdaptor: Put Borrowing Capacity Calculation 
     PutBorrowingCapacityCalculationSecondaryAdaptor-->>-CalculateBorrowingCapacityUseCase: throws InternalError
-    CalculateBorrowingCapacityUseCase-->>-PrimaryAdaptor: throws InternalServerError
+    CalculateBorrowingCapacityUseCase-->>-PrimaryAdaptor: throws InternalError
     PrimaryAdaptor-->>-User: {statusCode: 500, message: "Internal Server Error"}
 ```
 ### Borrower Profile Could Not Be Retrieved (500)
