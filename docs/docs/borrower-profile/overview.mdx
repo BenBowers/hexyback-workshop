@@ -1,5 +1,5 @@
 ---
-sidebar_position: 3
+sidebar_position: 1
 tags:
   - borrower-profile
 ---
@@ -26,9 +26,12 @@ sequenceDiagram
     participant PrimaryAdaptor as API GW: Create Borrower Profile
     participant CreateBorrowerProfileUseCase as Create Borrower Profile Use Case
     participant PutBorrowerProfileSecondaryAdapter as DynamoDB: Put Borrower Profile
+    participant GetBorrowerProfileSecondaryAdapter as DynamoDB: Get Borrower Profile
     
     User->>+PrimaryAdaptor: Submit Borrower Profile Data
     PrimaryAdaptor->>+CreateBorrowerProfileUseCase: Validate & Forward Data
+    CreateBorrowerProfileUseCase->>+GetBorrowerProfileSecondaryAdapter: Get Borrower Profile
+    GetBorrowerProfileSecondaryAdapter-->>-CreateBorrowerProfileUseCase: undefined
     CreateBorrowerProfileUseCase->>+PutBorrowerProfileSecondaryAdapter: Store Borrower Profile Information
     PutBorrowerProfileSecondaryAdapter-->>-CreateBorrowerProfileUseCase: Confirmation
     CreateBorrowerProfileUseCase-->>-PrimaryAdaptor: Confirmation
