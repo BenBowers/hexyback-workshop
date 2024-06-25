@@ -33,8 +33,17 @@ describe('ddb-put-loan-application', () => {
     timestamp: '2024-03-15T00:00:00.000Z',
   };
 
-  it.todo(
-    'throws an InternalError when the dynamodb client rejects for any reason',
-    async () => {}
-  );
+  it('throws an InternalError when the dynamodb client rejects for any reason', async () => {
+    dynamoDbMock.rejects(
+      new DynamoDBServiceException({
+        message: 'something went wrong',
+        $metadata: {},
+        name: 'ServiceException',
+        $fault: 'client',
+      })
+    );
+    await expect(putLoanApplication(loanApplication)).rejects.toBeInstanceOf(
+      InternalError
+    );
+  });
 });

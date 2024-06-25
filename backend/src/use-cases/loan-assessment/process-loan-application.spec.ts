@@ -61,14 +61,24 @@ describe('process loan-application', () => {
   });
 
   describe('given a borrower email, gross annual income, employment status and monthly expenses', () => {
-    it.todo('fetches the borrowers profile from the database', async () => {
+    const systemTime = new Date(2024, 2, 15);
+    const mockedTimestamp = systemTime.toISOString();
+  
+    beforeAll(() => {
+      vi.useFakeTimers();
+      vi.setSystemTime(systemTime);
+    });
+    afterAll(() => {
+      vi.useRealTimers();
+    });
+    it('fetches the borrowers profile from the database', async () => {
       await processLoanApplication(processLoanApplicationInput);
       expect(getBorrowerProfileSpy).toHaveBeenCalledWith(
         processLoanApplicationInput.borrowerEmail
       );
     });
     describe('given the borrower profile is not found', () => {
-      it.todo('rejects with borrower not found error', async () => {
+      it('rejects with borrower not found error', async () => {
         getBorrowerProfileSpy.mockResolvedValue(undefined);
         await expect(
           processLoanApplication(processLoanApplicationInput)
@@ -76,20 +86,51 @@ describe('process loan-application', () => {
       });
     });
     describe('given the get borrower profile adaptor rejects with an internal error', () => {
-      it.todo('rejects with the error', async () => {});
+      it('rejects with the error', async () => {});
     });
     describe('given the borrower profile is successfully retrieved', () => {
-      it.todo(
+      it(
         'calls the assess loan application use case with the ' +
           'borrowers age, employment status, gross annual income, monthly expenses and credit score',
-        async () => {}
+        async () => {
+          await processLoanApplication(processLoanApplicationInput);
+          expect(assessLoanApplicationSpy).toHaveBeenCalledWith({
+            age: 42,
+            creditScore: borrowerProfile.creditScore,
+            employmentStatus: processLoanApplicationInput.employmentStatus,
+            grossAnnualIncome: processLoanApplicationInput.grossAnnualIncome,
+            monthlyExpenses: processLoanApplicationInput.monthlyExpenses,
+          });
+        }
       );
-      it.todo('writes the loan application to the database', async () => {});
+      it('writes the loan application to the database', async () => {
+        await processLoanApplication(processLoanApplicationInput);
+        expect(putLoanApplicationSpy).toHaveBeenCalledWith({
+          loanApplicationId: expect.any(String),
+          borrowerEmail: processLoanApplicationInput.borrowerEmail,
+          creditScore: borrowerProfile.creditScore,
+          employmentStatus: processLoanApplicationInput.employmentStatus,
+          grossAnnualIncome: processLoanApplicationInput.grossAnnualIncome,
+          loanApplicationStatus: 'APPROVED',
+          monthlyExpenses: processLoanApplicationInput.monthlyExpenses,
+          timestamp: mockedTimestamp,
+        });
+      });
       describe('given the write to the database succeeds', () => {
-        it.todo('resolves with the loan application status', async () => {});
+        it('resolves with the loan application status', async () => {
+          return expect(
+            processLoanApplication(processLoanApplicationInput)
+          ).resolves.toEqual('APPROVED');
+        });
       });
       describe('given the write to the database rejects', () => {
-        it.todo('rejects with the error', async () => {});
+        it('rejects with the error', () => {
+          const error = new InternalError('Cheers Clint');
+          putLoanApplicationSpy.mockRejectedValue(error);
+          return expect(
+            processLoanApplication(processLoanApplicationInput)
+          ).rejects.toBe(error);
+        });
       });
     });
   });

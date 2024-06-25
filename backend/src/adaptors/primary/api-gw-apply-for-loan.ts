@@ -14,7 +14,43 @@ const logger = getLogger(serviceName);
 
 export const lambdaHandler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent
-) => {};
+) => {
+  try {
+    const {
+      grossAnnualIncome,
+      employmentStatus,
+      monthlyExpenses,
+      borrowerEmail,
+    } = JSON.parse(event.body!) as LoanApplication;
+    const loanApplicationStatus = await processLoanApplication({
+      grossAnnualIncome,
+      employmentStatus,
+      monthlyExpenses,
+      borrowerEmail,
+    });
+    return {
+      statusCode: 201,
+      body: JSON.stringify({
+        loanApplicationStatus,
+      } as ApplyForLoanResponse),
+    };
+  } catch (e) {
+    if (e instanceof BorrowerProfileDoesNotExistError) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          message: 'Borrower with the provided email does not exist',
+        }),
+      };
+    }
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        message: 'Internal Server Error',
+      }),
+    };
+  }
+};
 
 export const handler = middy(lambdaHandler)
   .use(captureLambdaHandler(tracer))

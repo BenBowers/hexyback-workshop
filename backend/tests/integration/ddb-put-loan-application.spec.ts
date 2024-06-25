@@ -69,10 +69,30 @@ describe('ddb-put-loan-application', () => {
       loanApplication.loanApplicationId
     );
   });
-  it.todo(
+  it(
     'writes a loan application record with ' +
       'PK of email and SK of LOAN_APPLICATION#loanApplicationId#TIMESTAMP#timestamp ' +
       'given a valid loan application',
-    async () => {}
+    async () => {
+      await putLoanApplication(loanApplication);
+      await expect(
+        getLoanApplication(
+          loanApplication.borrowerEmail,
+          loanApplication.loanApplicationId
+        )
+      ).resolves.toMatchObject({
+        pk: loanApplication.borrowerEmail,
+        sk:
+          `LOAN_APPLICATION#${loanApplication.loanApplicationId}` +
+          `#TIMESTAMP#${loanApplication.timestamp}`,
+        loanApplicationId: loanApplication.loanApplicationId,
+        timestamp: loanApplication.timestamp,
+        creditScore: loanApplication.creditScore,
+        grossAnnualIncome: loanApplication.grossAnnualIncome,
+        monthlyExpenses: loanApplication.monthlyExpenses,
+        loanApplicationStatus: loanApplication.loanApplicationStatus,
+        employmentStatus: loanApplication.employmentStatus,
+      });
+    }
   );
 });
