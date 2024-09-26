@@ -8,6 +8,7 @@
       ],
       "inputs": [
         "infra/api-definition.ts",
+        "generate-event-bridge-schema.ts",
         "scripts/generate.ts"
       ]
     },

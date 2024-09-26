@@ -9,7 +9,9 @@
     "deploy": "sst deploy",
     "remove": "sst remove",
     "console": "sst console",
-    "generate-types": "esbuild scripts/generate.ts --bundle --platform=node --target=node20 --format=cjs --outfile=openapi/openapi.cjs && node openapi/openapi.cjs && openapi-typescript openapi/spec.json -o openapi/types.d.ts",
+    "generate-event-bridge-schema-types": "esbuild scripts/generate-event-bridge.ts --bundle --platform=node --target=node20 --format=cjs --outfile=openapi/generate-event-bridge-schema.cjs && node openapi/generate-event-bridge-schema.cjs && openapi-typescript openapi/event-bridge-schema.json -o openapi/event-bridge-schema-types.d.ts",
+    "generate-api-gw-api-types": "esbuild scripts/generate.ts --bundle --platform=node --target=node20 --format=cjs --outfile=openapi/openapi.cjs && node openapi/openapi.cjs && openapi-typescript openapi/spec.json -o openapi/types.d.ts",
+    "generate-types": "pnpm run generate-event-bridge-schema-types && pnpm run generate-api-gw-api-types",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --ext .ts",
     "test": "vitest",
@@ -21,12 +23,14 @@
     "aws-sdk-client-mock": "^3.0.1",
     "aws-sdk-client-mock-jest": "^3.0.1",
     "openapi": "^1.0.1",
-    "openapi-typescript": "^6.7.4"
+    "openapi-typescript": "^6.7.4",
+    "rxjs": "^7.8.1"
   },
   "dependencies": {
     "@aws-lambda-powertools/logger": "^1.18.1",
     "@aws-lambda-powertools/tracer": "^1.18.1",
     "@aws-sdk/client-dynamodb": "^3.529.1",
+    "@aws-sdk/client-eventbridge": "^3.535.0",
     "@aws-sdk/util-dynamodb": "^3.529.1",
     "@middy/core": "~3",
     "openapi-fetch": "^0.9.2"
