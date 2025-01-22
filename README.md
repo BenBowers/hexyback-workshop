@@ -1,6 +1,8 @@
 # hexyback-workshop
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/BenBowers/hexyback-workshop?quickstart=1)
+ [![Open in Codeanywhere](https://codeanywhere.com/img/open-in-codeanywhere-btn.svg)](https://app.codeanywhere.com/#https://github.com/BenBowers/hexyback-workshop)
+
 
 ## Link to this Github repository 💻
 
