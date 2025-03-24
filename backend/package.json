@@ -17,7 +17,7 @@
     "test:integration": "sst bind 'vitest -c vitest-integration.config.ts'"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.134",
+    "@types/aws-lambda": "^8.10.148",
     "aws-sdk-client-mock": "^3.0.1",
     "aws-sdk-client-mock-jest": "^3.0.1",
     "openapi": "^1.0.1",
