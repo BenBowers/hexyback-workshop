@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.2",
-    "@types/aws-lambda": "^8.10.134",
+    "@types/aws-lambda": "^8.10.149",
     "@types/node": "^20.11.24",
     "@typescript-eslint/eslint-plugin": "^7.1.0",
     "aws-cdk-lib": "2.124.0",
